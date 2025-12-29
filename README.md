@@ -1,4 +1,4 @@
-# focus-analysis
+# focus
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
