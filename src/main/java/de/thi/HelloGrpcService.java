@@ -1,3 +1,4 @@
+/*
 package de.thi;
 
 import io.quarkus.grpc.GrpcService;
@@ -14,3 +15,5 @@ public class HelloGrpcService implements HelloGrpc {
     }
 
 }
+*/
+
