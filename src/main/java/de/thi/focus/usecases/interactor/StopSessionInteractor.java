@@ -1,9 +1,11 @@
-package de.thi.focus.usecases;
+package de.thi.focus.usecases.interactor;
 
 import de.thi.focus.entities.FocusSession;
 import de.thi.focus.usecases.dtos.input.StopSessionCommand;
+import de.thi.focus.usecases.dtos.output.StopSessionOutputDTO;
 import de.thi.focus.usecases.errors.SessionAccessDeniedException;
 import de.thi.focus.usecases.errors.SessionNotFoundException;
+import de.thi.focus.usecases.ports.inbound.StopSessionInputPort;
 import de.thi.focus.usecases.ports.outbound.system.Clock;
 import de.thi.focus.usecases.ports.outbound.EventPublisher;
 import de.thi.focus.usecases.ports.outbound.FocusSessionRepository;
@@ -12,13 +14,13 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 
-public final class StopSessionUseCase {
+public final class StopSessionInteractor implements StopSessionInputPort {
 
     private final FocusSessionRepository sessionRepository;
     private final Clock clock;
     private final EventPublisher eventPublisher;
 
-    public StopSessionUseCase(
+    public StopSessionInteractor(
             FocusSessionRepository sessionRepository,
             Clock clock,
             EventPublisher eventPublisher
@@ -28,27 +30,24 @@ public final class StopSessionUseCase {
         this.eventPublisher = Objects.requireNonNull(eventPublisher);
     }
 
-    public void execute(StopSessionCommand command) {
+    @Override
+    public StopSessionOutputDTO execute(StopSessionCommand command) {
 
-        // Load session
         FocusSession session = sessionRepository.findById(command.sessionId())
                 .orElseThrow(() -> new SessionNotFoundException(command.sessionId()));
 
-        // Ownership check
         if (!session.getOwner().equals(command.userId())) {
             throw new SessionAccessDeniedException(command.userId(), command.sessionId());
         }
 
-        // Determine endedAt
         Instant endedAt = command.endedAt() != null ? command.endedAt() : clock.now();
 
-        // Mutate session
         session.stopAt(endedAt);
 
-        // Persist
         sessionRepository.save(session);
 
-        // TODO: Publish events
         eventPublisher.publish(List.of());
+
+        return new StopSessionOutputDTO(session.getId());
     }
 }

@@ -2,7 +2,7 @@ package de.thi.focus.usecases.policies;
 
 import de.thi.focus.entities.ids.UserId;
 import de.thi.focus.usecases.errors.RunningSessionAlreadyExistsException;
-import de.thi.focus.usecases.ports.FocusSessionRepository;
+import de.thi.focus.usecases.ports.outbound.FocusSessionRepository;
 
 import java.util.Objects;
 

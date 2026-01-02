@@ -1,6 +1,6 @@
 package de.thi.focus.support;
 
-import de.thi.focus.usecases.ports.Clock;
+import de.thi.focus.usecases.ports.outbound.system.Clock;
 
 import java.time.Instant;
 

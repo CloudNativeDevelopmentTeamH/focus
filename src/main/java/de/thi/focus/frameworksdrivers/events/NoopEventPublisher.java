@@ -1,7 +1,7 @@
 package de.thi.focus.frameworksdrivers.events;
 
 import de.thi.focus.entities.events.DomainEvent;
-import de.thi.focus.usecases.ports.EventPublisher;
+import de.thi.focus.usecases.ports.outbound.EventPublisher;
 
 import java.util.List;
 

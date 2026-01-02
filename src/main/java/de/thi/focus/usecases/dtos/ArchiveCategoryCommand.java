@@ -1,9 +1,0 @@
-package de.thi.focus.usecases.dtos;
-
-import de.thi.focus.entities.ids.CategoryId;
-import de.thi.focus.entities.ids.UserId;
-
-public record ArchiveCategoryCommand(
-        UserId userId,
-        CategoryId categoryId
-) {}

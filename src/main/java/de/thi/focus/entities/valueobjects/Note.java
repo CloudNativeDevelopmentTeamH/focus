@@ -5,6 +5,7 @@ import de.thi.focus.entities.errors.NoteTooLongException;
 import java.util.Objects;
 
 public final class Note {
+    // Domain constraint
     public static final int MAX_LENGTH = 1000; //TODO: configurable via env
 
     private final String value;

@@ -5,7 +5,8 @@ import de.thi.focus.entities.errors.InvalidCategoryNameException;
 import java.util.Objects;
 
 public class CategoryName {
-    public static final int MAX_LENGTH = 50;
+    // Domain constraint
+    public static final int MAX_LENGTH = 50; // TODO: configurable via env
 
     private final String value;
 
