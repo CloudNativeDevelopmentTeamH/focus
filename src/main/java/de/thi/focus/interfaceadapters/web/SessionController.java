@@ -21,12 +21,7 @@ import de.thi.focus.usecases.ports.inbound.ResumeSessionInputPort;
 import de.thi.focus.usecases.ports.inbound.StartSessionInputPort;
 import de.thi.focus.usecases.ports.inbound.StopSessionInputPort;
 
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.HeaderParam;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -81,18 +76,24 @@ public final class SessionController {
     }
 
     @POST
-    @Path("/{sessionId}/stop")
+    @Path("/stop")
     public Response stop(
             @HeaderParam("X-User-Id") String userIdHeader,
-            @PathParam("sessionId") String sessionId,
+            @QueryParam("sessionId") String sessionId,
             StopSessionHttpRequest request
     ) {
         UserId userId = UserId.fromString(requireHeader(userIdHeader, "X-User-Id"));
 
+        if (sessionId == null || sessionId.isBlank()) {
+            throw new IllegalArgumentException("sessionId query parameter is required");
+        }
+
+        StopSessionHttpRequest safe = (request != null) ? request : new StopSessionHttpRequest();
+
         StopSessionCommand command = new StopSessionCommand(
                 userId,
                 FocusSessionId.fromString(sessionId),
-                parseInstantOrNull(request.endedAt)
+                parseInstantOrNull(safe.endedAt)
         );
 
         StopSessionOutputDTO output = stopSession.execute(command);
@@ -103,13 +104,21 @@ public final class SessionController {
     @Path("/resume")
     public Response resume(
             @HeaderParam("X-User-Id") String userIdHeader,
+            @QueryParam("previousSessionId") String previousSessionId,
             ResumeSessionHttpRequest request
     ) {
         UserId userId = UserId.fromString(requireHeader(userIdHeader, "X-User-Id"));
 
+        if (previousSessionId == null || previousSessionId.isBlank()) {
+            throw new IllegalArgumentException("previousSessionId query parameter is required");
+        }
+
+        ResumeSessionHttpRequest safe = (request != null) ? request : new ResumeSessionHttpRequest();
+
         ResumeSessionCommand command = new ResumeSessionCommand(
                 userId,
-                parseInstantOrNull(request.startedAt)
+                FocusSessionId.fromString(previousSessionId),
+                parseInstantOrNull(safe.startedAt)
         );
 
         ResumeSessionOutputDTO output = resumeSession.execute(command);

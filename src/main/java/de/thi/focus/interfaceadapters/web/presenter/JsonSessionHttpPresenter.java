@@ -23,7 +23,10 @@ public final class JsonSessionHttpPresenter implements SessionHttpPresenter {
     public Response present(ResumeSessionOutputDTO output) {
         return Response.status(Response.Status.CREATED)
                 .type(MediaType.APPLICATION_JSON)
-                .entity(Map.of("sessionId", output.sessionId().toString()))
+                .entity(Map.of(
+                        "sessionId", output.sessionId().toString(),
+                        "resumedFromSessionId", output.resumedFromSessionId().toString()
+                ))
                 .build();
     }
 

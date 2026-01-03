@@ -4,7 +4,8 @@ import de.thi.focus.entities.FocusSession;
 import de.thi.focus.entities.ids.FocusSessionId;
 import de.thi.focus.usecases.dtos.input.ResumeSessionCommand;
 import de.thi.focus.usecases.dtos.output.ResumeSessionOutputDTO;
-import de.thi.focus.usecases.errors.NoPreviousSessionToResumeException;
+import de.thi.focus.usecases.errors.SessionAccessDeniedException;
+import de.thi.focus.usecases.errors.SessionNotFoundException;
 import de.thi.focus.usecases.policies.RunningSessionPolicy;
 import de.thi.focus.usecases.ports.inbound.ResumeSessionInputPort;
 import de.thi.focus.usecases.ports.outbound.system.Clock;
@@ -39,8 +40,16 @@ public final class ResumeSessionInteractor implements ResumeSessionInputPort {
 
         runningSessionPolicy.ensureNoRunningSession(command.userId());
 
-        FocusSession previous = sessionRepository.findLastFinishedByUser(command.userId())
-                .orElseThrow(() -> new NoPreviousSessionToResumeException(command.userId()));
+        FocusSession previous = sessionRepository.findById(command.previousSessionId())
+                .orElseThrow(() -> new SessionNotFoundException(command.previousSessionId()));
+
+        if (!previous.getOwner().equals(command.userId())) {
+            throw new SessionAccessDeniedException(command.userId(), command.previousSessionId());
+        }
+
+        if (previous.isRunning()) {
+            throw new de.thi.focus.entities.errors.SessionStillRunningException(previous.getId());
+        }
 
         Instant startedAt = command.startedAt() != null ? command.startedAt() : clock.now();
 
@@ -56,6 +65,6 @@ public final class ResumeSessionInteractor implements ResumeSessionInputPort {
 
         eventPublisher.publish(List.of());
 
-        return new ResumeSessionOutputDTO(resumed.getId());
+        return new ResumeSessionOutputDTO(resumed.getId(), previous.getId());
     }
 }
