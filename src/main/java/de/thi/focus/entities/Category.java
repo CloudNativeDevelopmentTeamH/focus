@@ -1,5 +1,7 @@
 package de.thi.focus.entities;
 
+import de.thi.focus.entities.errors.CategoryAlreadyArchivedException;
+import de.thi.focus.entities.errors.CategoryNotArchivedException;
 import de.thi.focus.entities.ids.CategoryId;
 import de.thi.focus.entities.ids.UserId;
 import de.thi.focus.entities.valueobjects.CategoryName;
@@ -53,15 +55,21 @@ public class Category {
         this.name = Objects.requireNonNull(newName, "newName must not be null");
     }
 
-    public void recolor(Color newColor) {
+    public void changeColor(Color newColor) {
         this.color = Objects.requireNonNull(newColor, "newColor must not be null");
     }
 
     public void archive() {
+        if (this.archived) {
+            throw new CategoryAlreadyArchivedException(this.id);
+        }
         this.archived = true;
     }
 
     public void unarchive() {
+        if (!this.archived) {
+            throw new CategoryNotArchivedException(this.id);
+        }
         this.archived = false;
     }
 }

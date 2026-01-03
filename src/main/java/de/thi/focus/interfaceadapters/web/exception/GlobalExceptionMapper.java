@@ -55,6 +55,10 @@ public final class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
         // -------------------------
         // Domain errors
         // -------------------------
+        if (ex instanceof CategoryAlreadyArchivedException || ex instanceof CategoryNotArchivedException) {
+            return json(Response.Status.CONFLICT, "FAILED_PRECONDITION", ex.getMessage());
+        }
+
         if (ex instanceof DomainException) {
             // Keep it generic: domain failures are usually client-caused or precondition failures
             return json(Response.Status.BAD_REQUEST, "DOMAIN_ERROR", ex.getMessage());

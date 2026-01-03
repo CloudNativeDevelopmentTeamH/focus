@@ -170,6 +170,15 @@ public class ApplicationWiring {
 
     @Produces
     @ApplicationScoped
+    UnarchiveCategoryInputPort unarchiveCategoryInputPort(
+            CategoryRepository categoryRepository,
+            EventPublisher eventPublisher
+    ) {
+        return new UnarchiveCategoryInteractor(categoryRepository, eventPublisher);
+    }
+
+    @Produces
+    @ApplicationScoped
     DeleteCategoryInputPort deleteCategoryInputPort(
             CategoryRepository categoryRepository,
             FocusSessionRepository sessionRepository,
@@ -182,5 +191,15 @@ public class ApplicationWiring {
     @ApplicationScoped
     ListCategoriesInputPort listCategoriesInputPort(CategoryRepository categoryRepository) {
         return new ListCategoriesInteractor(categoryRepository);
+    }
+
+    @Produces
+    @ApplicationScoped
+    ChangeCategoryColorInputPort changeCategoryColorInputPort(
+            CategoryRepository categoryRepository,
+            FocusValueObjectFactory voFactory,
+            EventPublisher eventPublisher
+    ) {
+        return new ChangeCategoryColorInteractor(categoryRepository, voFactory, eventPublisher);
     }
 }

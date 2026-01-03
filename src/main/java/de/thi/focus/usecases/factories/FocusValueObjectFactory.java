@@ -32,4 +32,11 @@ public final class FocusValueObjectFactory {
         }
         return new Color(raw);
     }
+
+    public Color colorRequired(String raw) {
+        if (raw == null || raw.isBlank()) {
+            throw new IllegalArgumentException("color must not be null or blank");
+        }
+        return new Color(raw);
+    }
 }
