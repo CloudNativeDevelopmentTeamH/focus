@@ -65,7 +65,7 @@ public final class StartSessionUseCase {
         }
 
         // Create entity
-        Note note = command.note() != null ? new Note(command.note()) : null;
+        Note note = command.note() != null ? Note.of(command.note(), 500) : Note.empty();
 
         FocusSession session = FocusSession.start(
                 FocusSessionId.newId(),
