@@ -70,11 +70,19 @@ public final class FocusSession {
         return timeRange.duration();
     }
 
+    public void clearCategory() {
+        this.categoryId = null;
+    }
+
     public void changeCategory(CategoryId newCategoryId) {
-        this.categoryId = newCategoryId; // nullable
+        this.categoryId = Objects.requireNonNull(newCategoryId, "newCategoryId must not be null");
     }
 
     public void updateNote(Note newNote) {
-        this.note = newNote; // nullable
+        this.note = Objects.requireNonNull(newNote, "newNote must not be null");
+    }
+
+    public void clearNote() {
+        this.note = null;
     }
 }

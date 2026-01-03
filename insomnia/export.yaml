@@ -290,6 +290,13 @@ collection:
                 send: true
                 store: true
               rebuildPath: true
+      - name: Update
+        meta:
+          id: fld_12725eb9ba84452d876db74154488d55
+          created: 1767465944577
+          modified: 1767465944577
+          sortKey: -1767465944578
+          description: ""
   - name: Category
     meta:
       id: fld_8d0c7316f9854d44ba769a19cc034ad4

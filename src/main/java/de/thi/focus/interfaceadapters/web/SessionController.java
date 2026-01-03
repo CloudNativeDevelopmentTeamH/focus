@@ -7,21 +7,20 @@ import de.thi.focus.entities.ids.UserId;
 import de.thi.focus.interfaceadapters.web.dto.ResumeSessionHttpRequest;
 import de.thi.focus.interfaceadapters.web.dto.StartSessionHttpRequest;
 import de.thi.focus.interfaceadapters.web.dto.StopSessionHttpRequest;
+import de.thi.focus.interfaceadapters.web.dto.UpdateSessionHttpRequest;
 import de.thi.focus.interfaceadapters.web.presenter.SessionHttpPresenter;
 
 import de.thi.focus.usecases.dtos.input.ResumeSessionCommand;
 import de.thi.focus.usecases.dtos.input.StartSessionCommand;
 import de.thi.focus.usecases.dtos.input.StopSessionCommand;
 
+import de.thi.focus.usecases.dtos.input.UpdateSessionCommand;
 import de.thi.focus.usecases.dtos.output.GetRunningSessionOutputDTO;
 import de.thi.focus.usecases.dtos.output.ResumeSessionOutputDTO;
 import de.thi.focus.usecases.dtos.output.StartSessionOutputDTO;
 import de.thi.focus.usecases.dtos.output.StopSessionOutputDTO;
 
-import de.thi.focus.usecases.ports.inbound.GetRunningSessionInputPort;
-import de.thi.focus.usecases.ports.inbound.ResumeSessionInputPort;
-import de.thi.focus.usecases.ports.inbound.StartSessionInputPort;
-import de.thi.focus.usecases.ports.inbound.StopSessionInputPort;
+import de.thi.focus.usecases.ports.inbound.*;
 
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -40,19 +39,22 @@ public final class SessionController {
     private final ResumeSessionInputPort resumeSession;
     private final SessionHttpPresenter presenter;
     private final GetRunningSessionInputPort getRunningSession;
+    private final UpdateSessionInputPort updateSession;
 
     public SessionController(
             StartSessionInputPort startSession,
             StopSessionInputPort stopSession,
             ResumeSessionInputPort resumeSession,
             SessionHttpPresenter presenter,
-            GetRunningSessionInputPort getRunningSession
+            GetRunningSessionInputPort getRunningSession,
+            UpdateSessionInputPort updateSession
     ) {
         this.startSession = Objects.requireNonNull(startSession);
         this.stopSession = Objects.requireNonNull(stopSession);
         this.resumeSession = Objects.requireNonNull(resumeSession);
         this.presenter = Objects.requireNonNull(presenter);
         this.getRunningSession = Objects.requireNonNull(getRunningSession);
+        this.updateSession = Objects.requireNonNull(updateSession);
     }
 
     @POST
@@ -138,6 +140,36 @@ public final class SessionController {
         GetRunningSessionOutputDTO output = getRunningSession.execute(userId);
         return presenter.present(output);
     }
+
+    @POST
+    @Path("/update")
+    public Response update(
+            @HeaderParam("X-User-Id") String userIdHeader,
+            @QueryParam("sessionId") String sessionId,
+            UpdateSessionHttpRequest request
+    ) {
+        UserId userId = UserId.fromString(requireHeader(userIdHeader, "X-User-Id"));
+
+        if (sessionId == null || sessionId.isBlank()) {
+            throw new IllegalArgumentException("sessionId query parameter is required");
+        }
+
+        if (request == null) request = new UpdateSessionHttpRequest();
+
+        updateSession.execute(new UpdateSessionCommand(
+                userId,
+                FocusSessionId.fromString(sessionId),
+                null,
+                null,
+                request.categoryId != null ? CategoryId.fromString(request.categoryId) : null,
+                request.clearCategory,
+                request.note,
+                request.clearNote
+        ));
+
+        return Response.noContent().build();
+    }
+
 
     private static String requireHeader(String value, String headerName) {
         if (value == null || value.isBlank()) {

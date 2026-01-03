@@ -140,6 +140,16 @@ public class ApplicationWiring {
 
     @Produces
     @ApplicationScoped
+    UpdateSessionInputPort updateSessionInputPort(
+            FocusSessionRepository sessionRepository,
+            FocusValueObjectFactory voFactory,
+            EventPublisher eventPublisher
+    ) {
+        return new UpdateSessionInteractor(sessionRepository, voFactory, eventPublisher);
+    }
+
+    @Produces
+    @ApplicationScoped
     RenameCategoryInputPort renameCategoryInputPort(
             CategoryRepository categoryRepository,
             UniqueCategoryNamePolicy uniqueCategoryNamePolicy,
