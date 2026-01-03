@@ -1,6 +1,7 @@
 package de.thi.focus.usecases.ports.outbound;
 
 import de.thi.focus.entities.FocusSession;
+import de.thi.focus.entities.ids.CategoryId;
 import de.thi.focus.entities.ids.UserId;
 import de.thi.focus.entities.ids.FocusSessionId;
 
@@ -15,4 +16,6 @@ public interface FocusSessionRepository {
     Optional<FocusSession> findById(FocusSessionId id);
 
     void save(FocusSession session);
+
+    boolean existsByOwnerAndCategoryId(UserId ownerId, CategoryId categoryId);
 }

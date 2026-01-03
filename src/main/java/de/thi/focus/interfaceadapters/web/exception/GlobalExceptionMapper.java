@@ -48,6 +48,10 @@ public final class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
             return json(Response.Status.CONFLICT, "NO_PREVIOUS_SESSION", ex.getMessage());
         }
 
+        if (ex instanceof CategoryInUseException) {
+            return json(Response.Status.CONFLICT, "FAILED_PRECONDITION", ex.getMessage());
+        }
+
         // -------------------------
         // Domain errors
         // -------------------------

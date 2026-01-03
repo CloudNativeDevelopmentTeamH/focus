@@ -7,15 +7,10 @@ import de.thi.focus.interfaceadapters.web.dto.RenameCategoryHttpRequest;
 import de.thi.focus.interfaceadapters.web.presenter.CategoryHttpPresenter;
 import de.thi.focus.usecases.dtos.input.ArchiveCategoryCommand;
 import de.thi.focus.usecases.dtos.input.CreateCategoryCommand;
+import de.thi.focus.usecases.dtos.input.DeleteCategoryCommand;
 import de.thi.focus.usecases.dtos.input.RenameCategoryCommand;
-import de.thi.focus.usecases.dtos.output.ArchiveCategoryOutputDTO;
-import de.thi.focus.usecases.dtos.output.CreateCategoryOutputDTO;
-import de.thi.focus.usecases.dtos.output.ListCategoriesOutputDTO;
-import de.thi.focus.usecases.dtos.output.RenameCategoryOutputDTO;
-import de.thi.focus.usecases.ports.inbound.ArchiveCategoryInputPort;
-import de.thi.focus.usecases.ports.inbound.CreateCategoryInputPort;
-import de.thi.focus.usecases.ports.inbound.ListCategoriesInputPort;
-import de.thi.focus.usecases.ports.inbound.RenameCategoryInputPort;
+import de.thi.focus.usecases.dtos.output.*;
+import de.thi.focus.usecases.ports.inbound.*;
 
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -31,6 +26,7 @@ public final class CategoryController {
     private final CreateCategoryInputPort createCategory;
     private final RenameCategoryInputPort renameCategory;
     private final ArchiveCategoryInputPort archiveCategory;
+    private final DeleteCategoryInputPort deleteCategory;
     private final ListCategoriesInputPort listCategories;
     private final CategoryHttpPresenter presenter;
 
@@ -38,12 +34,14 @@ public final class CategoryController {
             CreateCategoryInputPort createCategory,
             RenameCategoryInputPort renameCategory,
             ArchiveCategoryInputPort archiveCategory,
+            DeleteCategoryInputPort deleteCategory,
             ListCategoriesInputPort listCategories,
             CategoryHttpPresenter presenter
     ) {
         this.createCategory = Objects.requireNonNull(createCategory);
         this.renameCategory = Objects.requireNonNull(renameCategory);
         this.archiveCategory = Objects.requireNonNull(archiveCategory);
+        this.deleteCategory = Objects.requireNonNull(deleteCategory);
         this.listCategories = Objects.requireNonNull(listCategories);
         this.presenter = Objects.requireNonNull(presenter);
     }
@@ -116,4 +114,25 @@ public final class CategoryController {
         }
         return value;
     }
+
+    @POST
+    @Path("/delete")
+    public Response delete(
+            @HeaderParam("X-User-Id") String userIdHeader,
+            @QueryParam("categoryId") String categoryId
+    ) {
+        UserId userId = UserId.fromString(requireHeader(userIdHeader, "X-User-Id"));
+
+        if (categoryId == null || categoryId.isBlank()) {
+            throw new IllegalArgumentException("categoryId query parameter is required");
+        }
+
+        DeleteCategoryOutputDTO output = deleteCategory.execute(
+                new DeleteCategoryCommand(userId, CategoryId.fromString(categoryId))
+        );
+
+        // du kannst 204 machen; Output DTO ist optional
+        return Response.noContent().build();
+    }
+
 }

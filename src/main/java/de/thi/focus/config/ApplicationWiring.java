@@ -170,6 +170,16 @@ public class ApplicationWiring {
 
     @Produces
     @ApplicationScoped
+    DeleteCategoryInputPort deleteCategoryInputPort(
+            CategoryRepository categoryRepository,
+            FocusSessionRepository sessionRepository,
+            EventPublisher eventPublisher
+    ) {
+        return new DeleteCategoryInteractor(categoryRepository, sessionRepository, eventPublisher);
+    }
+
+    @Produces
+    @ApplicationScoped
     ListCategoriesInputPort listCategoriesInputPort(CategoryRepository categoryRepository) {
         return new ListCategoriesInteractor(categoryRepository);
     }

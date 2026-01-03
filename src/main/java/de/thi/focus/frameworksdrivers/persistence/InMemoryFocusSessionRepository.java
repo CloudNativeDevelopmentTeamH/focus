@@ -1,6 +1,7 @@
 package de.thi.focus.frameworksdrivers.persistence;
 
 import de.thi.focus.entities.FocusSession;
+import de.thi.focus.entities.ids.CategoryId;
 import de.thi.focus.entities.ids.FocusSessionId;
 import de.thi.focus.entities.ids.UserId;
 import de.thi.focus.usecases.ports.outbound.FocusSessionRepository;
@@ -48,6 +49,13 @@ public final class InMemoryFocusSessionRepository implements FocusSessionReposit
     @Override
     public void save(FocusSession session) {
         store.put(session.getId(), session);
+    }
+
+    @Override
+    public boolean existsByOwnerAndCategoryId(UserId ownerId, CategoryId categoryId) {
+        return store.values().stream()
+                .filter(s -> s.getOwner().equals(ownerId))
+                .anyMatch(s -> categoryId.equals(s.getCategoryId()));
     }
 
     // Optional helper for tests

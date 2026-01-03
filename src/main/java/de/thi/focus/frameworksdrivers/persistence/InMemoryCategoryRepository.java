@@ -39,6 +39,11 @@ public final class InMemoryCategoryRepository implements CategoryRepository {
                 .toList();
     }
 
+    @Override
+    public void deleteById(CategoryId id) {
+        store.remove(id);
+    }
+
     // Optional helper
     public void clear() {
         store.clear();
