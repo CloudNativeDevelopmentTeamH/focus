@@ -1,0 +1,19 @@
+quarkus:
+  http:
+    port: 8088
+
+  # TODO: Enable when database integration is needed
+  hibernate-orm:
+    enabled: false
+
+  # TODO: Enable when database integration is needed
+  datasource:
+    enabled: false
+
+focus:
+  constraints:
+    note:
+      max-length: 1000
+    category:
+      name:
+        max-length: 50

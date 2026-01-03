@@ -4,28 +4,34 @@ import de.thi.focus.entities.errors.InvalidCategoryNameException;
 
 import java.util.Objects;
 
-public class CategoryName {
-    // Domain constraint
-    public static final int MAX_LENGTH = 50; // TODO: configurable via env
+public final class CategoryName {
 
     private final String value;
 
-    public CategoryName(String raw) {
+    private CategoryName(String value) {
+        this.value = value;
+    }
+
+    public static CategoryName of(String raw, int maxLength) {
         if (raw == null) {
-            throw new InvalidCategoryNameException(null, MAX_LENGTH, "name must not be null");
+            throw new InvalidCategoryNameException(null, maxLength, "name must not be null");
         }
 
         String normalized = raw.trim();
 
         if (normalized.isEmpty()) {
-            throw new InvalidCategoryNameException(raw, MAX_LENGTH, "name must not be empty");
+            throw new InvalidCategoryNameException(raw, maxLength, "name must not be empty");
         }
 
-        if (normalized.length() > MAX_LENGTH) {
-            throw new InvalidCategoryNameException(raw, MAX_LENGTH, "name must not exceed " + MAX_LENGTH + " characters");
+        if (normalized.length() > maxLength) {
+            throw new InvalidCategoryNameException(
+                    raw,
+                    maxLength,
+                    "name must not exceed " + maxLength + " characters"
+            );
         }
 
-        this.value = normalized;
+        return new CategoryName(normalized);
     }
 
     public String value() {

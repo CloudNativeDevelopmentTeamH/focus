@@ -5,23 +5,29 @@ import de.thi.focus.entities.errors.NoteTooLongException;
 import java.util.Objects;
 
 public final class Note {
-    // Domain constraint
-    public static final int MAX_LENGTH = 1000; //TODO: configurable via env
 
     private final String value;
 
-    public Note(String raw) {
-        if (raw == null) {
-            this.value = "";
-            return;
-        }
-
-        String normalized = raw.trim();
-
-        if (normalized.length() > MAX_LENGTH) {
-            throw new NoteTooLongException(normalized.length(), MAX_LENGTH);
-        }
+    private Note(String normalized) {
         this.value = normalized;
+    }
+
+    public static Note of(String raw, int maxLength) {
+        String normalized = normalize(raw);
+
+        if (normalized.length() > maxLength) {
+            throw new NoteTooLongException(normalized.length(), maxLength);
+        }
+        return new Note(normalized);
+    }
+
+    public static Note empty() {
+        return new Note("");
+    }
+
+    private static String normalize(String raw) {
+        if (raw == null) return "";
+        return raw.trim();
     }
 
     public String value() {

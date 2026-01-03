@@ -85,14 +85,16 @@ public class ApplicationWiring {
             CategoryRepository categoryRepository,
             RunningSessionPolicy runningSessionPolicy,
             Clock clock,
-            EventPublisher eventPublisher
+            EventPublisher eventPublisher,
+            FocusConstraintsConfig constraints
     ) {
         return new StartSessionInteractor(
                 sessionRepository,
                 categoryRepository,
                 runningSessionPolicy,
                 clock,
-                eventPublisher
+                eventPublisher,
+                constraints
         );
     }
 
@@ -122,8 +124,14 @@ public class ApplicationWiring {
     RenameCategoryInputPort renameCategoryInputPort(
             CategoryRepository categoryRepository,
             UniqueCategoryNamePolicy uniqueCategoryNamePolicy,
-            EventPublisher eventPublisher
+            EventPublisher eventPublisher,
+            FocusConstraintsConfig constraints
     ) {
-        return new RenameCategoryInteractor(categoryRepository, uniqueCategoryNamePolicy, eventPublisher);
+        return new RenameCategoryInteractor(
+                categoryRepository,
+                uniqueCategoryNamePolicy,
+                eventPublisher,
+                constraints
+        );
     }
 }

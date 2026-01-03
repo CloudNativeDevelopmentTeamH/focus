@@ -1,5 +1,6 @@
 package de.thi.focus.usecases.interactor;
 
+import de.thi.focus.config.FocusConstraintsConfig;
 import de.thi.focus.entities.Category;
 import de.thi.focus.entities.valueobjects.CategoryName;
 import de.thi.focus.usecases.dtos.input.RenameCategoryCommand;
@@ -19,15 +20,18 @@ public final class RenameCategoryInteractor implements RenameCategoryInputPort {
     private final CategoryRepository categoryRepository;
     private final UniqueCategoryNamePolicy uniqueCategoryNamePolicy;
     private final EventPublisher eventPublisher;
+    private final FocusConstraintsConfig constraints;
 
     public RenameCategoryInteractor(
             CategoryRepository categoryRepository,
             UniqueCategoryNamePolicy uniqueCategoryNamePolicy,
-            EventPublisher eventPublisher
+            EventPublisher eventPublisher,
+            FocusConstraintsConfig constraints
     ) {
         this.categoryRepository = Objects.requireNonNull(categoryRepository);
         this.uniqueCategoryNamePolicy = Objects.requireNonNull(uniqueCategoryNamePolicy);
         this.eventPublisher = Objects.requireNonNull(eventPublisher);
+        this.constraints = Objects.requireNonNull(constraints);
     }
 
     @Override
@@ -40,7 +44,10 @@ public final class RenameCategoryInteractor implements RenameCategoryInputPort {
             throw new CategoryAccessDeniedException(command.userId(), command.categoryId());
         }
 
-        CategoryName newName = new CategoryName(command.newName());
+        CategoryName newName = CategoryName.of(
+                command.newName(),
+                constraints.category().name().maxLength()
+        );
 
         // Application rule: unique per user
         uniqueCategoryNamePolicy.ensureUnique(command.userId(), newName, category.getId());
