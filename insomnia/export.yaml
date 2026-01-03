@@ -255,6 +255,41 @@ collection:
           modified: 1767451810580
           sortKey: -1767451810580
           description: ""
+      - name: Running
+        meta:
+          id: fld_992f7b93d4d440f084c1b6fcb66dded2
+          created: 1767463577126
+          modified: 1767463577126
+          sortKey: -1767463577126
+          description: ""
+        children:
+          - url: http://localhost:8088/sessions/running
+            name: New Request
+            meta:
+              id: req_20ea038f18b04c4a9ff30072f59cbbf4
+              created: 1767463579624
+              modified: 1767463603245
+              isPrivate: false
+              description: ""
+              sortKey: -1767463579624
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+              - name: X-User-Id
+                value: 11111111-1111-1111-1111-111111111111
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
   - name: Category
     meta:
       id: fld_8d0c7316f9854d44ba769a19cc034ad4
@@ -370,6 +405,93 @@ collection:
             parameters:
               - name: categoryId
                 value: 00b39156-7050-4596-8740-b4837bfb99e9
+                description: ""
+                disabled: false
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+              - name: X-User-Id
+                value: 11111111-1111-1111-1111-111111111111
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: Change Color
+        meta:
+          id: fld_b6302f6f6f0c4badad898ee3dc837a63
+          created: 1767463633490
+          modified: 1767463633490
+          sortKey: -1767463633490
+          description: ""
+      - name: Archive
+        meta:
+          id: fld_59e57865e45e43b98ef0e9099ec0408a
+          created: 1767463733309
+          modified: 1767463733309
+          sortKey: -1767463733309
+          description: ""
+        children:
+          - url: http://localhost:8088/categories/archive
+            name: Archive
+            meta:
+              id: req_b4d47ec19f294786b7f81649063c9124
+              created: 1767463749854
+              modified: 1767463810624
+              isPrivate: false
+              description: ""
+              sortKey: -1767463749854
+            method: POST
+            parameters:
+              - name: categoryId
+                value: ""
+                description: ""
+                disabled: false
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+              - name: X-User-Id
+                value: 11111111-1111-1111-1111-111111111111
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: Unarchive
+        meta:
+          id: fld_e001f20616844122a67b60f4d75b93f2
+          created: 1767463741014
+          modified: 1767463741014
+          sortKey: -1767463741014
+          description: ""
+        children:
+          - url: http://localhost:8088/categories/unarchive
+            name: New Request
+            meta:
+              id: req_70b985ec8b8e42a8bb7389e78e315626
+              created: 1767463813112
+              modified: 1767463848438
+              isPrivate: false
+              description: ""
+              sortKey: -1767463813112
+            method: POST
+            parameters:
+              - name: categoryId
+                value: ""
                 description: ""
                 disabled: false
             headers:

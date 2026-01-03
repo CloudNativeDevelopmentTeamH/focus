@@ -1,5 +1,6 @@
 package de.thi.focus.interfaceadapters.web.presenter;
 
+import de.thi.focus.usecases.dtos.output.GetRunningSessionOutputDTO;
 import de.thi.focus.usecases.dtos.output.ResumeSessionOutputDTO;
 import de.thi.focus.usecases.dtos.output.StartSessionOutputDTO;
 import de.thi.focus.usecases.dtos.output.StopSessionOutputDTO;
@@ -34,4 +35,17 @@ public final class JsonSessionHttpPresenter implements SessionHttpPresenter {
     public Response present(StopSessionOutputDTO output) {
         return Response.noContent().build(); // 204
     }
+
+    @Override
+    public Response present(GetRunningSessionOutputDTO output) {
+        if (!output.running()) {
+            return Response.noContent().build();
+        }
+
+        return Response.ok()
+                .type(MediaType.APPLICATION_JSON)
+                .entity(output)
+                .build();
+    }
+
 }

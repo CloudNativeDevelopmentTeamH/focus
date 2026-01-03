@@ -134,6 +134,12 @@ public class ApplicationWiring {
 
     @Produces
     @ApplicationScoped
+    GetRunningSessionInputPort getRunningSessionInputPort(FocusSessionRepository sessionRepository) {
+        return new GetRunningSessionInteractor(sessionRepository);
+    }
+
+    @Produces
+    @ApplicationScoped
     RenameCategoryInputPort renameCategoryInputPort(
             CategoryRepository categoryRepository,
             UniqueCategoryNamePolicy uniqueCategoryNamePolicy,

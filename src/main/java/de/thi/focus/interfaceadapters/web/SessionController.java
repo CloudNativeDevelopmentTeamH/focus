@@ -13,10 +13,12 @@ import de.thi.focus.usecases.dtos.input.ResumeSessionCommand;
 import de.thi.focus.usecases.dtos.input.StartSessionCommand;
 import de.thi.focus.usecases.dtos.input.StopSessionCommand;
 
+import de.thi.focus.usecases.dtos.output.GetRunningSessionOutputDTO;
 import de.thi.focus.usecases.dtos.output.ResumeSessionOutputDTO;
 import de.thi.focus.usecases.dtos.output.StartSessionOutputDTO;
 import de.thi.focus.usecases.dtos.output.StopSessionOutputDTO;
 
+import de.thi.focus.usecases.ports.inbound.GetRunningSessionInputPort;
 import de.thi.focus.usecases.ports.inbound.ResumeSessionInputPort;
 import de.thi.focus.usecases.ports.inbound.StartSessionInputPort;
 import de.thi.focus.usecases.ports.inbound.StopSessionInputPort;
@@ -37,17 +39,20 @@ public final class SessionController {
     private final StopSessionInputPort stopSession;
     private final ResumeSessionInputPort resumeSession;
     private final SessionHttpPresenter presenter;
+    private final GetRunningSessionInputPort getRunningSession;
 
     public SessionController(
             StartSessionInputPort startSession,
             StopSessionInputPort stopSession,
             ResumeSessionInputPort resumeSession,
-            SessionHttpPresenter presenter
+            SessionHttpPresenter presenter,
+            GetRunningSessionInputPort getRunningSession
     ) {
         this.startSession = Objects.requireNonNull(startSession);
         this.stopSession = Objects.requireNonNull(stopSession);
         this.resumeSession = Objects.requireNonNull(resumeSession);
         this.presenter = Objects.requireNonNull(presenter);
+        this.getRunningSession = Objects.requireNonNull(getRunningSession);
     }
 
     @POST
@@ -122,6 +127,15 @@ public final class SessionController {
         );
 
         ResumeSessionOutputDTO output = resumeSession.execute(command);
+        return presenter.present(output);
+    }
+
+    @GET
+    @Path("/running")
+    public Response running(@HeaderParam("X-User-Id") String userIdHeader) {
+        UserId userId = UserId.fromString(requireHeader(userIdHeader, "X-User-Id"));
+
+        GetRunningSessionOutputDTO output = getRunningSession.execute(userId);
         return presenter.present(output);
     }
 
