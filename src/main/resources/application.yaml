@@ -17,3 +17,5 @@ focus:
     category:
       name:
         max-length: 50
+  defaults:
+    category-color: "#FFFFFF"

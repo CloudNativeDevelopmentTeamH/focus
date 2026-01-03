@@ -1,20 +1,17 @@
 package de.thi.focus.config;
 
+import de.thi.focus.interfaceadapters.web.presenter.CategoryHttpPresenter;
+import de.thi.focus.interfaceadapters.web.presenter.JsonCategoryHttpPresenter;
 import de.thi.focus.interfaceadapters.web.presenter.JsonSessionHttpPresenter;
 import de.thi.focus.interfaceadapters.web.presenter.SessionHttpPresenter;
 
-import de.thi.focus.usecases.interactor.RenameCategoryInteractor;
-import de.thi.focus.usecases.interactor.ResumeSessionInteractor;
-import de.thi.focus.usecases.interactor.StartSessionInteractor;
-import de.thi.focus.usecases.interactor.StopSessionInteractor;
+import de.thi.focus.usecases.factories.FocusValueObjectFactory;
+import de.thi.focus.usecases.interactor.*;
 
 import de.thi.focus.usecases.policies.RunningSessionPolicy;
 
 import de.thi.focus.usecases.policies.UniqueCategoryNamePolicy;
-import de.thi.focus.usecases.ports.inbound.RenameCategoryInputPort;
-import de.thi.focus.usecases.ports.inbound.ResumeSessionInputPort;
-import de.thi.focus.usecases.ports.inbound.StartSessionInputPort;
-import de.thi.focus.usecases.ports.inbound.StopSessionInputPort;
+import de.thi.focus.usecases.ports.inbound.*;
 
 import de.thi.focus.usecases.ports.outbound.CategoryRepository;
 import de.thi.focus.usecases.ports.outbound.system.Clock;
@@ -37,6 +34,12 @@ public class ApplicationWiring {
     @ApplicationScoped
     SessionHttpPresenter sessionHttpPresenter() {
         return new JsonSessionHttpPresenter();
+    }
+
+    @Produces
+    @ApplicationScoped
+    CategoryHttpPresenter categoryHttpPresenter() {
+        return new JsonCategoryHttpPresenter();
     }
 
     // ---------- Outbound adapters (temporary in-memory) ----------
@@ -75,6 +78,16 @@ public class ApplicationWiring {
     @ApplicationScoped
     UniqueCategoryNamePolicy uniqueCategoryNamePolicy(CategoryRepository categoryRepository) {
         return new UniqueCategoryNamePolicy(categoryRepository);
+    }
+
+    // ---------- Factories ----------
+    @Produces
+    @ApplicationScoped
+    FocusValueObjectFactory focusValueObjectFactory(
+            FocusConstraintsConfig constraints,
+            FocusDefaultsConfig defaults
+    ) {
+        return new FocusValueObjectFactory(constraints, defaults);
     }
 
     // ---------- Inbound ports (Interactors) ----------
@@ -133,5 +146,31 @@ public class ApplicationWiring {
                 eventPublisher,
                 constraints
         );
+    }
+
+
+    @Produces
+    @ApplicationScoped
+    CreateCategoryInputPort createCategoryInputPort(
+            CategoryRepository categoryRepository,
+            FocusValueObjectFactory voFactory,
+            EventPublisher eventPublisher
+    ) {
+        return new CreateCategoryInteractor(categoryRepository, voFactory, eventPublisher);
+    }
+
+    @Produces
+    @ApplicationScoped
+    ArchiveCategoryInputPort archiveCategoryInputPort(
+            CategoryRepository categoryRepository,
+            EventPublisher eventPublisher
+    ) {
+        return new ArchiveCategoryInteractor(categoryRepository, eventPublisher);
+    }
+
+    @Produces
+    @ApplicationScoped
+    ListCategoriesInputPort listCategoriesInputPort(CategoryRepository categoryRepository) {
+        return new ListCategoriesInteractor(categoryRepository);
     }
 }
