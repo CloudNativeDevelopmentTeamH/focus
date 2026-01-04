@@ -12,7 +12,7 @@ public class ReadinessResource {
 
     @GET
     public Response readinessCheck() {
-        // TODO: Implementiere echte Readiness-Prüfungen
+        // TODO: Implement actual readiness checks
         return Response.ok().entity("{\"status\": \"UP\"}").build();
     }
 }

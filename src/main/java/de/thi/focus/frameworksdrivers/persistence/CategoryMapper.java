@@ -15,7 +15,7 @@ final class CategoryMapper {
         e.id = domain.getId().value();
         e.ownerId = domain.getOwner().value();
         e.name = domain.getName().value();
-        e.color = domain.getColor().value(); // falls Color.value() existiert; sonst .toString()
+        e.color = domain.getColor().value();
         e.archived = domain.isArchived();
         return e;
     }
