@@ -5,6 +5,8 @@ import de.thi.focus.entities.ids.CategoryId;
 import de.thi.focus.entities.ids.FocusSessionId;
 import de.thi.focus.entities.ids.UserId;
 import de.thi.focus.usecases.ports.outbound.FocusSessionRepository;
+import io.quarkus.arc.profile.IfBuildProfile;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -12,10 +14,8 @@ import java.util.Comparator;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Simple in-memory repository for local dev & tests.
- * Not intended for production use.
- */
+@ApplicationScoped
+@IfBuildProfile("test")
 public final class InMemoryFocusSessionRepository implements FocusSessionRepository {
 
     private final ConcurrentHashMap<FocusSessionId, FocusSession> store = new ConcurrentHashMap<>();

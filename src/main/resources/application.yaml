@@ -2,13 +2,24 @@ quarkus:
   http:
     port: 8088
 
-  # TODO: Enable when database integration is needed
   hibernate-orm:
-    enabled: false
+    enabled: true
+    schema-management:
+      strategy: validate
+    log:
+      sql: true
+    packages: de.thi.focus.frameworksdrivers.persistence.jpa
 
-  # TODO: Enable when database integration is needed
+  flyway:
+    migrate-at-start: true
+    locations: db/migration
+
   datasource:
-    enabled: false
+    db-kind: postgresql
+    username: focus
+    password: focus
+    jdbc:
+      url: jdbc:postgresql://localhost:5432/focus
 
 focus:
   constraints:

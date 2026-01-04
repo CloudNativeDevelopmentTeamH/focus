@@ -1,0 +1,79 @@
+package de.thi.focus.frameworksdrivers.persistence;
+
+import de.thi.focus.entities.FocusSession;
+import de.thi.focus.entities.ids.CategoryId;
+import de.thi.focus.entities.ids.FocusSessionId;
+import de.thi.focus.entities.ids.UserId;
+import de.thi.focus.frameworksdrivers.persistence.jpa.FocusSessionEntity;
+import de.thi.focus.usecases.factories.FocusValueObjectFactory;
+import de.thi.focus.usecases.ports.outbound.FocusSessionRepository;
+import jakarta.enterprise.inject.Vetoed;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+
+import java.util.Optional;
+
+@Vetoed
+public class JpaFocusSessionRepository implements FocusSessionRepository {
+
+    private final EntityManager em;
+    private final FocusValueObjectFactory voFactory;
+
+    public JpaFocusSessionRepository(EntityManager em, FocusValueObjectFactory voFactory) {
+        this.em = em;
+        this.voFactory = voFactory;
+    }
+
+    @Override
+    public Optional<FocusSession> findRunningByUser(UserId userId) {
+        var list = em.createQuery("""
+                select s from FocusSessionEntity s
+                where s.ownerId = :ownerId and s.endAt is null
+                order by s.startAt desc
+                """, FocusSessionEntity.class)
+                .setParameter("ownerId", userId.value())
+                .setMaxResults(1)
+                .getResultList();
+
+        return list.stream().findFirst().map(e -> FocusSessionMapper.toDomain(e, voFactory));
+    }
+
+    @Override
+    public Optional<FocusSession> findById(FocusSessionId id) {
+        var e = em.find(FocusSessionEntity.class, id.value());
+        return Optional.ofNullable(e).map(entity -> FocusSessionMapper.toDomain(entity, voFactory));
+    }
+
+    @Override
+    public Optional<FocusSession> findLastFinishedByUser(UserId userId) {
+        var list = em.createQuery("""
+                select s from FocusSessionEntity s
+                where s.ownerId = :ownerId and s.endAt is not null
+                order by s.endAt desc
+                """, FocusSessionEntity.class)
+                .setParameter("ownerId", userId.value())
+                .setMaxResults(1)
+                .getResultList();
+
+        return list.stream().findFirst().map(e -> FocusSessionMapper.toDomain(e, voFactory));
+    }
+
+    @Override
+    @Transactional
+    public void save(FocusSession session) {
+        em.merge(FocusSessionMapper.toEntity(session));
+    }
+
+    @Override
+    public boolean existsByOwnerAndCategoryId(UserId ownerId, CategoryId categoryId) {
+        var count = em.createQuery("""
+                select count(s) from FocusSessionEntity s
+                where s.ownerId = :ownerId and s.categoryId = :categoryId
+                """, Long.class)
+                .setParameter("ownerId", ownerId.value())
+                .setParameter("categoryId", categoryId.value())
+                .getSingleResult();
+
+        return count != null && count > 0;
+    }
+}

@@ -32,6 +32,11 @@ public final class FocusSession {
         return new FocusSession(id, owner, TimeRange.startingAt(startedAt), categoryId, note);
     }
 
+    // Rehydration from persistence - no invariant checks, data is already validated
+    public static FocusSession reconstitute(FocusSessionId id, UserId owner, TimeRange timeRange, CategoryId categoryId, Note note) {
+        return new FocusSession(id, owner, timeRange, categoryId, note);
+    }
+
     public FocusSessionId getId() {
         return id;
     }

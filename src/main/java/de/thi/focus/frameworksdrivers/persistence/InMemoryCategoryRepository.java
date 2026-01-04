@@ -5,11 +5,15 @@ import de.thi.focus.entities.ids.CategoryId;
 import de.thi.focus.entities.ids.UserId;
 import de.thi.focus.entities.valueobjects.CategoryName;
 import de.thi.focus.usecases.ports.outbound.CategoryRepository;
+import io.quarkus.arc.profile.IfBuildProfile;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+@ApplicationScoped
+@IfBuildProfile("test")
 public final class InMemoryCategoryRepository implements CategoryRepository {
 
     private final ConcurrentHashMap<CategoryId, Category> store = new ConcurrentHashMap<>();

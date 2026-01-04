@@ -1,5 +1,6 @@
 package de.thi.focus.config;
 
+import de.thi.focus.frameworksdrivers.persistence.*;
 import de.thi.focus.interfaceadapters.web.presenter.CategoryHttpPresenter;
 import de.thi.focus.interfaceadapters.web.presenter.JsonCategoryHttpPresenter;
 import de.thi.focus.interfaceadapters.web.presenter.JsonSessionHttpPresenter;
@@ -19,12 +20,11 @@ import de.thi.focus.usecases.ports.outbound.EventPublisher;
 import de.thi.focus.usecases.ports.outbound.FocusSessionRepository;
 
 import de.thi.focus.frameworksdrivers.events.NoopEventPublisher;
-import de.thi.focus.frameworksdrivers.persistence.InMemoryCategoryRepository;
-import de.thi.focus.frameworksdrivers.persistence.InMemoryFocusSessionRepository;
 import de.thi.focus.frameworksdrivers.time.SystemClock;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
+import jakarta.persistence.EntityManager;
 
 @ApplicationScoped
 public class ApplicationWiring {
@@ -42,17 +42,15 @@ public class ApplicationWiring {
         return new JsonCategoryHttpPresenter();
     }
 
-    // ---------- Outbound adapters (temporary in-memory) ----------
+    // ---------- Outbound adapters ----------
     @Produces
-    @ApplicationScoped
-    FocusSessionRepository focusSessionRepository() {
-        return new InMemoryFocusSessionRepository();
+    public FocusSessionRepository focusSessionRepository(EntityManager em, FocusValueObjectFactory voFactory) {
+        return new JpaFocusSessionRepository(em, voFactory);
     }
 
     @Produces
-    @ApplicationScoped
-    CategoryRepository categoryRepository() {
-        return new InMemoryCategoryRepository();
+    public CategoryRepository categoryRepository(EntityManager em, FocusValueObjectFactory voFactory) {
+        return new JpaCategoryRepository(em, voFactory);
     }
 
     @Produces

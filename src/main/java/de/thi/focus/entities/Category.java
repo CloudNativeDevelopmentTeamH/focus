@@ -72,4 +72,8 @@ public class Category {
         }
         this.archived = false;
     }
+
+    public static Category rehydrate(CategoryId id, UserId owner, CategoryName name, Color color, boolean archived) {
+        return new Category(id, owner, name, color, archived);
+    }
 }
