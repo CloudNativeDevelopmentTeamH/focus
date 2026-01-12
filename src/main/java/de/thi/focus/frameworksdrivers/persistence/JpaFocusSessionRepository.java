@@ -7,22 +7,21 @@ import de.thi.focus.entities.ids.UserId;
 import de.thi.focus.frameworksdrivers.persistence.jpa.FocusSessionEntity;
 import de.thi.focus.usecases.factories.FocusValueObjectFactory;
 import de.thi.focus.usecases.ports.outbound.FocusSessionRepository;
-import jakarta.enterprise.inject.Vetoed;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
 import java.util.Optional;
 
-@Vetoed
+@ApplicationScoped
 public class JpaFocusSessionRepository implements FocusSessionRepository {
 
-    private final EntityManager em;
-    private final FocusValueObjectFactory voFactory;
+    @Inject
+    EntityManager em;
 
-    public JpaFocusSessionRepository(EntityManager em, FocusValueObjectFactory voFactory) {
-        this.em = em;
-        this.voFactory = voFactory;
-    }
+    @Inject
+    FocusValueObjectFactory voFactory;
 
     @Override
     public Optional<FocusSession> findRunningByUser(UserId userId) {

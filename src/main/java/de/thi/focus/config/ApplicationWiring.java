@@ -43,10 +43,6 @@ public class ApplicationWiring {
     }
 
     // ---------- Outbound adapters ----------
-    @Produces
-    public FocusSessionRepository focusSessionRepository(EntityManager em, FocusValueObjectFactory voFactory) {
-        return new JpaFocusSessionRepository(em, voFactory);
-    }
 
     @Produces
     public CategoryRepository categoryRepository(EntityManager em, FocusValueObjectFactory voFactory) {
