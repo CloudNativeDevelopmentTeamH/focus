@@ -7,3 +7,26 @@ services:
       POSTGRES_PASSWORD: focus
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U focus -d focus"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  focus:
+    build:
+      context: .
+      dockerfile: src/main/docker/Dockerfile.jvm
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8088:8088"
+    environment:
+      QUARKUS_PROFILE: docker
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

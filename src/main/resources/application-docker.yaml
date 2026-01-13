@@ -1,0 +1,13 @@
+quarkus:
+  http:
+    port: 8080
+
+  datasource:
+    jdbc:
+      url: jdbc:postgresql://postgres:5432/focus
+
+  grpc:
+    clients:
+      auth:
+        host: auth
+        port: 50051
