@@ -1,6 +1,19 @@
 quarkus:
   http:
     port: 8088
+    cors:
+      enabled: false
+      origins: "http://localhost:3000"
+      methods: "GET,PUT,POST,DELETE,OPTIONS"
+      headers: "origin, content-type, accept, authorization"
+      access-control-allow-credentials: true
+  grpc:
+    clients:
+      auth:
+        host: localhost
+        port: 50051
+        plain-text: true # TODO use TLS in production
+        use-quarkus-grpc-client: true
 
   hibernate-orm:
     enabled: true
