@@ -1,81 +1,154 @@
-# focus
+# Focus
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+A Quarkus-based application for focus session tracking, built following **Clean Architecture** principles.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+## Architecture
 
-## Running the application in dev mode
+The project follows Clean Architecture (Hexagonal / Ports & Adapters):
 
-You can run your application in dev mode that enables live coding using:
+```
+src/main/java/de/thi/focus/
+├── entities/               # Enterprise Business Rules (Innermost Ring)
+│   ├── Category.java       # Category Entity
+│   ├── FocusSession.java   # Focus Session Entity
+│   ├── ids/                # Value Objects for IDs
+│   ├── valueobjects/       # Value Objects (Note, TimeRange, Color, CategoryName)
+│   ├── errors/             # Domain-specific Exceptions
+│   └── events/             # Domain Events
+│
+├── usecases/               # Application Business Rules
+│   ├── ports/
+│   │   ├── inbound/        # Input Ports (Use Case Interfaces)
+│   │   └── outbound/       # Output Ports (Repository & System Interfaces)
+│   ├── interactor/         # Use Case Implementations
+│   ├── policies/           # Business Policies (e.g., RunningSessionPolicy)
+│   ├── factories/          # Value Object Factories
+│   ├── dtos/               # Use Case DTOs (Input/Output)
+│   └── errors/             # Use Case Errors
+│
+├── interfaceadapters/      # Interface Adapters
+│   ├── web/                # REST Controllers
+│   │   ├── SessionController.java
+│   │   ├── CategoryController.java
+│   │   ├── dto/            # HTTP Request/Response DTOs
+│   │   ├── presenter/      # Output Presenters
+│   │   └── exception/      # Exception Mappers
+│   ├── health/             # Health Endpoints
+│   │   ├── HealthResource.java   # GET /healthz
+│   │   └── ReadinessResource.java # GET /readyz (incl. DB check)
+│   └── grpc/               # gRPC Services
+│
+├── frameworksdrivers/      # Frameworks & Drivers (Outermost Ring)
+│   ├── persistence/        # JPA Repositories & Mappers
+│   ├── events/             # Event Publisher Implementations
+│   └── time/               # Clock Implementations
+│
+├── config/                 # Configuration
+│   ├── ApplicationWiring.java     # CDI Producer (Dependency Injection)
+│   ├── FocusConstraintsConfig.java
+│   └── FocusDefaultsConfig.java
+│
+└── support/                # Test Support (e.g., FixedClock)
+```
 
-```shell script
+### Layer Model
+
+| Layer               | Responsibility                         | Examples                                         |
+|---------------------|----------------------------------------|--------------------------------------------------|
+| **Entities**        | Core business logic, domain invariants | `FocusSession`, `Category`, Value Objects        |
+| **Use Cases**       | Application use cases, orchestration   | `StartSessionInteractor`, `StopSessionInteractor`|
+| **Interface Adapters**| Conversion, presentation              | REST Controllers, Presenters, Mappers            |
+| **Frameworks/Drivers**| Technical infrastructure              | JPA Repositories, Event Publishers               |
+
+### Use Cases (Inbound Ports)
+
+**Sessions:**
+- `StartSessionInputPort` - Start a session
+- `StopSessionInputPort` - Stop a session
+- `ResumeSessionInputPort` - Resume a session
+- `GetRunningSessionInputPort` - Get active session
+- `UpdateSessionInputPort` - Update a session
+
+**Categories:**
+- `CreateCategoryInputPort` - Create a category
+- `RenameCategoryInputPort` - Rename a category
+- `ChangeCategoryColorInputPort` - Change color
+- `ArchiveCategoryInputPort` / `UnarchiveCategoryInputPort` - Archive/Unarchive
+- `DeleteCategoryInputPort` - Delete a category
+- `ListCategoriesInputPort` - List categories
+
+### Policies
+
+- `RunningSessionPolicy` - Checks if a session is already running
+- `UniqueCategoryNamePolicy` - Ensures unique category names
+
+## Tech Stack
+
+- **Runtime:** Java 21, Quarkus 3.30
+- **Persistence:** Hibernate ORM, PostgreSQL, Flyway
+- **API:** REST (Jackson), gRPC
+- **Build:** Maven
+
+## Development
+
+### Prerequisites
+
+- Java 21+
+- Docker (for PostgreSQL)
+
+### Start Database
+
+```shell
+docker compose up -d
+```
+
+### Run Application in Dev Mode
+
+```shell
 ./mvnw quarkus:dev
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+The application runs on port **8088** (configured in `application.yaml`).
 
-## Packaging and running the application
+### Packaging
 
-The application can be packaged using:
-
-```shell script
+```shell
 ./mvnw package
+java -jar target/quarkus-app/quarkus-run.jar
 ```
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
+### Native Build
 
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
-./mvnw package -Dquarkus.package.jar.type=uber-jar
-```
-
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
+```shell
 ./mvnw package -Dnative
+./target/focus-analysis-1.0-SNAPSHOT-runner
 ```
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
+## API Endpoints
 
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
+| Method | Path                  | Description               |
+|--------|-----------------------|---------------------------|
+| GET    | `/healthz`            | Liveness Check            |
+| GET    | `/readyz`             | Readiness Check (incl. DB)|
+| POST   | `/sessions/start`     | Start a session           |
+| POST   | `/sessions/stop`      | Stop a session            |
+| POST   | `/sessions/resume`    | Resume a session          |
+| GET    | `/sessions/running`   | Get active session        |
+| POST   | `/categories`         | Create a category         |
+| GET    | `/categories`         | List categories           |
+
+## Configuration
+
+See `src/main/resources/application.yaml`:
+
+```yaml
+focus:
+  constraints:
+    note:
+      max-length: 1000
+    category:
+      name:
+        max-length: 50
+  defaults:
+    category-color: "#FFFFFF"
 ```
-
-You can then execute your native executable with: `./target/focus-analysis-1.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
-
-## Related Guides
-
-- Hibernate ORM ([guide](https://quarkus.io/guides/hibernate-orm)): Define your persistent model with Hibernate ORM and
-  Jakarta Persistence
-- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus
-  REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
-
-## Provided Code
-
-### gRPC
-
-Create your first gRPC service
-
-[Related guide section...](https://quarkus.io/guides/grpc-getting-started)
-
-### Hibernate ORM
-
-Create your first JPA entity
-
-[Related guide section...](https://quarkus.io/guides/hibernate-orm)
-
-### REST
-
-Easily start your REST Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
