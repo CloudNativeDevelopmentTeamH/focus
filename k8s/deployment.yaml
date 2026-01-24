@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: focus
+  labels:
+    app: focus
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: focus
+  template:
+    metadata:
+      labels:
+        app: focus
+    spec:
+      containers:
+        - name: focus
+          image: image:tag // TODO: replace with actual image
+          ports:
+            - containerPort: 8088
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8088
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8088
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          envFrom:
+            - configMapRef:
+                name: focus-env
+            - secretRef:
+                name: focus-secrets
