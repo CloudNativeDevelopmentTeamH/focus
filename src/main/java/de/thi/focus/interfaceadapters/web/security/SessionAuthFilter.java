@@ -40,6 +40,9 @@ public class SessionAuthFilter implements ContainerRequestFilter {
         if (path.equals("healthz") || path.startsWith("healthz/")) return;
         if (path.equals("readyz") || path.startsWith("readyz/")) return;
 
+        // CORS Preflight
+        if ("OPTIONS".equals(ctx.getMethod())) return;
+
         Cookie sidCookie = ctx.getCookies().get(COOKIE_SID);
         if (sidCookie == null || sidCookie.getValue() == null || sidCookie.getValue().isBlank()) {
             abort401(ctx);
