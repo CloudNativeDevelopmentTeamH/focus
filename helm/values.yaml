@@ -107,7 +107,7 @@ quarkus:
   grpc:
     clients:
       auth:
-        host: localhost
+        host: auth-service.auth.svc.cluster.local
         port: 50051
         plainText: true
         useQuarkusGrpcClient: true
@@ -127,7 +127,7 @@ quarkus:
   datasource:
     dbKind: postgresql
     jdbc:
-      url: "jdbc:postgresql://localhost:5432/focus"
+      url: "jdbc:postgresql://postgres:5432/focus"
 
 # Application specific configuration
 focusApp:
