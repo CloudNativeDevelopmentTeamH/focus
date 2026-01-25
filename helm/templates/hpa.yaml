@@ -3,7 +3,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: focus-hpa
-  namespace: {{ .Values.global.namespace }}
+  namespace: focus
   labels:
     app: {{ .Values.focus.name }}
 spec:

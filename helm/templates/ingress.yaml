@@ -3,15 +3,20 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: "{{ .Values.focus.name }}-ingress"
-  namespace: {{ .Values.global.namespace }}
+  namespace: focus
   annotations:
-    alb.ingress.kubernetes.io/scheme: {{ .Values.focus.ingress.annotations."alb.ingress.kubernetes.io/scheme" }}
-    alb.ingress.kubernetes.io/target-type: {{ .Values.focus.ingress.annotations."alb.ingress.kubernetes.io/target-type" }}
-    alb.ingress.kubernetes.io/listen-ports: {{ .Values.focus.ingress.annotations."alb.ingress.kubernetes.io/listen-ports" }}
+    {{- range $key, $value := .Values.focus.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
 spec:
   ingressClassName: {{ .Values.focus.ingress.className }}
   rules:
+    {{- if .Values.focus.ingress.host }}
+    - host: {{ .Values.focus.ingress.host }}
+      http:
+    {{- else }}
     - http:
+    {{- end }}
         paths:
           - path: {{ .Values.focus.ingress.path }}
             pathType: {{ .Values.focus.ingress.pathType }}
