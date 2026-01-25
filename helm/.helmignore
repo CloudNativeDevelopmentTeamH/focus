@@ -1,0 +1,15 @@
+# Ignore SOPS encrypted files
+*.enc.yaml
+*secrets.enc.yaml
+
+# Ignore SOPS config
+.sops.yaml
+templates/.sops.yaml
+
+# Ignore backup files
+*.bak
+*.tmp
+
+# Ignore git files
+.git/
+.gitignore
