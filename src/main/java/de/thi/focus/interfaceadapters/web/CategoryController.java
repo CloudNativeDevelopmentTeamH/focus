@@ -6,6 +6,7 @@ import de.thi.focus.interfaceadapters.web.dto.ChangeCategoryColorHttpRequest;
 import de.thi.focus.interfaceadapters.web.dto.CreateCategoryHttpRequest;
 import de.thi.focus.interfaceadapters.web.dto.RenameCategoryHttpRequest;
 import de.thi.focus.interfaceadapters.web.presenter.CategoryHttpPresenter;
+import de.thi.focus.interfaceadapters.web.security.CurrentUser;
 import de.thi.focus.usecases.dtos.input.*;
 import de.thi.focus.usecases.dtos.output.*;
 import de.thi.focus.usecases.ports.inbound.*;
@@ -29,6 +30,7 @@ public final class CategoryController {
     private final CategoryHttpPresenter presenter;
     private final ChangeCategoryColorInputPort changeCategoryColor;
     private final UnarchiveCategoryInputPort unarchiveCategory;
+    private final CurrentUser currentUser;
 
     public CategoryController(
             CreateCategoryInputPort createCategory,
@@ -38,7 +40,8 @@ public final class CategoryController {
             ListCategoriesInputPort listCategories,
             CategoryHttpPresenter presenter,
             ChangeCategoryColorInputPort changeCategoryColor,
-            UnarchiveCategoryInputPort unarchiveCategory
+            UnarchiveCategoryInputPort unarchiveCategory,
+            CurrentUser currentUser
     ) {
         this.createCategory = Objects.requireNonNull(createCategory);
         this.renameCategory = Objects.requireNonNull(renameCategory);
@@ -48,12 +51,13 @@ public final class CategoryController {
         this.presenter = Objects.requireNonNull(presenter);
         this.changeCategoryColor = Objects.requireNonNull(changeCategoryColor);
         this.unarchiveCategory = Objects.requireNonNull(unarchiveCategory);
+        this.currentUser = Objects.requireNonNull(currentUser);
     }
 
     @POST
     @Path("/create")
-    public Response create(@HeaderParam("X-User-Id") String userIdHeader, CreateCategoryHttpRequest request) {
-        UserId userId = UserId.fromString(requireHeader(userIdHeader, "X-User-Id"));
+    public Response create(CreateCategoryHttpRequest request) {
+        UserId userId = currentUser.userId();
 
         if (request == null) request = new CreateCategoryHttpRequest();
 
@@ -67,11 +71,10 @@ public final class CategoryController {
     @POST
     @Path("/rename")
     public Response rename(
-            @HeaderParam("X-User-Id") String userIdHeader,
             @QueryParam("categoryId") String categoryId,
             RenameCategoryHttpRequest request
     ) {
-        UserId userId = UserId.fromString(requireHeader(userIdHeader, "X-User-Id"));
+        UserId userId = currentUser.userId();
 
         if (categoryId == null || categoryId.isBlank()) {
             throw new IllegalArgumentException("categoryId query parameter is required");
@@ -87,11 +90,8 @@ public final class CategoryController {
 
     @POST
     @Path("/archive")
-    public Response archive(
-            @HeaderParam("X-User-Id") String userIdHeader,
-            @QueryParam("categoryId") String categoryId
-    ) {
-        UserId userId = UserId.fromString(requireHeader(userIdHeader, "X-User-Id"));
+    public Response archive(@QueryParam("categoryId") String categoryId) {
+        UserId userId = currentUser.userId();
 
         if (categoryId == null || categoryId.isBlank()) {
             throw new IllegalArgumentException("categoryId query parameter is required");
@@ -106,11 +106,8 @@ public final class CategoryController {
 
     @POST
     @Path("/unarchive")
-    public Response unarchive(
-            @HeaderParam("X-User-Id") String userIdHeader,
-            @QueryParam("categoryId") String categoryId
-    ) {
-        UserId userId = UserId.fromString(requireHeader(userIdHeader, "X-User-Id"));
+    public Response unarchive(@QueryParam("categoryId") String categoryId) {
+        UserId userId = currentUser.userId();
 
         if (categoryId == null || categoryId.isBlank()) {
             throw new IllegalArgumentException("categoryId query parameter is required");
@@ -124,47 +121,36 @@ public final class CategoryController {
     }
 
     @GET
-    public Response list(@HeaderParam("X-User-Id") String userIdHeader) {
-        UserId userId = UserId.fromString(requireHeader(userIdHeader, "X-User-Id"));
+    public Response list() {
+        UserId userId = currentUser.userId();
 
         ListCategoriesOutputDTO output = listCategories.execute(userId);
         return presenter.present(output);
     }
 
-    private static String requireHeader(String value, String headerName) {
-        if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException(headerName + " header is required");
-        }
-        return value;
-    }
-
     @POST
     @Path("/delete")
-    public Response delete(
-            @HeaderParam("X-User-Id") String userIdHeader,
-            @QueryParam("categoryId") String categoryId
-    ) {
-        UserId userId = UserId.fromString(requireHeader(userIdHeader, "X-User-Id"));
+    public Response delete(@QueryParam("categoryId") String categoryId) {
+        UserId userId = currentUser.userId();
 
         if (categoryId == null || categoryId.isBlank()) {
             throw new IllegalArgumentException("categoryId query parameter is required");
         }
 
-        DeleteCategoryOutputDTO output = deleteCategory.execute(
+        deleteCategory.execute(
                 new DeleteCategoryCommand(userId, CategoryId.fromString(categoryId))
         );
 
-        // du kannst 204 machen; Output DTO ist optional
         return Response.noContent().build();
     }
+
     @POST
     @Path("/change-color")
     public Response changeColor(
-            @HeaderParam("X-User-Id") String userIdHeader,
             @QueryParam("categoryId") String categoryId,
             ChangeCategoryColorHttpRequest request
     ) {
-        UserId userId = UserId.fromString(requireHeader(userIdHeader, "X-User-Id"));
+        UserId userId = currentUser.userId();
 
         if (categoryId == null || categoryId.isBlank()) {
             throw new IllegalArgumentException("categoryId query parameter is required");

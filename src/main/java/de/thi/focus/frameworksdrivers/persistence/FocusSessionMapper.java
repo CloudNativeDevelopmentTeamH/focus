@@ -45,7 +45,6 @@ final class FocusSessionMapper {
         );
     }
 
-
     private static TimeRange rehydrateTimeRange(Instant start, Instant end) {
         TimeRange tr = TimeRange.startingAt(start);
         return end != null ? tr.stopAt(end) : tr;

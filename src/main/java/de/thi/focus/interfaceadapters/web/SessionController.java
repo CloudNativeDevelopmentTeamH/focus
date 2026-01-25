@@ -10,6 +10,8 @@ import de.thi.focus.interfaceadapters.web.dto.StopSessionHttpRequest;
 import de.thi.focus.interfaceadapters.web.dto.UpdateSessionHttpRequest;
 import de.thi.focus.interfaceadapters.web.presenter.SessionHttpPresenter;
 
+import de.thi.focus.interfaceadapters.web.security.CurrentUser;
+
 import de.thi.focus.usecases.dtos.input.ResumeSessionCommand;
 import de.thi.focus.usecases.dtos.input.StartSessionCommand;
 import de.thi.focus.usecases.dtos.input.StopSessionCommand;
@@ -40,6 +42,7 @@ public final class SessionController {
     private final SessionHttpPresenter presenter;
     private final GetRunningSessionInputPort getRunningSession;
     private final UpdateSessionInputPort updateSession;
+    private final CurrentUser currentUser;
 
     public SessionController(
             StartSessionInputPort startSession,
@@ -47,7 +50,8 @@ public final class SessionController {
             ResumeSessionInputPort resumeSession,
             SessionHttpPresenter presenter,
             GetRunningSessionInputPort getRunningSession,
-            UpdateSessionInputPort updateSession
+            UpdateSessionInputPort updateSession,
+            CurrentUser currentUser
     ) {
         this.startSession = Objects.requireNonNull(startSession);
         this.stopSession = Objects.requireNonNull(stopSession);
@@ -55,15 +59,13 @@ public final class SessionController {
         this.presenter = Objects.requireNonNull(presenter);
         this.getRunningSession = Objects.requireNonNull(getRunningSession);
         this.updateSession = Objects.requireNonNull(updateSession);
+        this.currentUser = Objects.requireNonNull(currentUser);
     }
 
     @POST
     @Path("/start")
-    public Response start(
-            @HeaderParam("X-User-Id") String userIdHeader,
-            StartSessionHttpRequest request
-    ) {
-        UserId userId = UserId.fromString(requireHeader(userIdHeader, "X-User-Id"));
+    public Response start(StartSessionHttpRequest request) {
+        UserId userId = currentUser.userId();
 
         Instant startedAt = parseInstantOrNull(request.startedAt);
 
@@ -85,11 +87,10 @@ public final class SessionController {
     @POST
     @Path("/stop")
     public Response stop(
-            @HeaderParam("X-User-Id") String userIdHeader,
             @QueryParam("sessionId") String sessionId,
             StopSessionHttpRequest request
     ) {
-        UserId userId = UserId.fromString(requireHeader(userIdHeader, "X-User-Id"));
+        UserId userId = currentUser.userId();
 
         if (sessionId == null || sessionId.isBlank()) {
             throw new IllegalArgumentException("sessionId query parameter is required");
@@ -110,11 +111,10 @@ public final class SessionController {
     @POST
     @Path("/resume")
     public Response resume(
-            @HeaderParam("X-User-Id") String userIdHeader,
             @QueryParam("previousSessionId") String previousSessionId,
             ResumeSessionHttpRequest request
     ) {
-        UserId userId = UserId.fromString(requireHeader(userIdHeader, "X-User-Id"));
+        UserId userId = currentUser.userId();
 
         if (previousSessionId == null || previousSessionId.isBlank()) {
             throw new IllegalArgumentException("previousSessionId query parameter is required");
@@ -134,8 +134,8 @@ public final class SessionController {
 
     @GET
     @Path("/running")
-    public Response running(@HeaderParam("X-User-Id") String userIdHeader) {
-        UserId userId = UserId.fromString(requireHeader(userIdHeader, "X-User-Id"));
+    public Response running() {
+        UserId userId = currentUser.userId();
 
         GetRunningSessionOutputDTO output = getRunningSession.execute(userId);
         return presenter.present(output);
@@ -144,11 +144,10 @@ public final class SessionController {
     @POST
     @Path("/update")
     public Response update(
-            @HeaderParam("X-User-Id") String userIdHeader,
             @QueryParam("sessionId") String sessionId,
             UpdateSessionHttpRequest request
     ) {
-        UserId userId = UserId.fromString(requireHeader(userIdHeader, "X-User-Id"));
+        UserId userId = currentUser.userId();
 
         if (sessionId == null || sessionId.isBlank()) {
             throw new IllegalArgumentException("sessionId query parameter is required");
@@ -168,15 +167,6 @@ public final class SessionController {
         ));
 
         return Response.noContent().build();
-    }
-
-
-    private static String requireHeader(String value, String headerName) {
-        if (value == null || value.isBlank()) {
-            // mapped by GlobalExceptionMapper to 400 INVALID_REQUEST
-            throw new IllegalArgumentException(headerName + " header is required");
-        }
-        return value;
     }
 
     private static Instant parseInstantOrNull(String raw) {

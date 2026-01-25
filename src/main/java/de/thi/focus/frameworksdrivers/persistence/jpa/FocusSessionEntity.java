@@ -13,7 +13,7 @@ public class FocusSessionEntity {
     public UUID id;
 
     @Column(name = "owner_id", nullable = false)
-    public UUID ownerId;
+    public int ownerId;
 
     @Column(name = "start_at", nullable = false)
     public Instant startAt;

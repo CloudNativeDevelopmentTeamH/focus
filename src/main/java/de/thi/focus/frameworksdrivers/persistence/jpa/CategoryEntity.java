@@ -16,7 +16,7 @@ public class CategoryEntity {
     public UUID id;
 
     @Column(name = "owner_id", nullable = false)
-    public UUID ownerId;
+    public int ownerId;
 
     @Column(name = "name", nullable = false)
     public String name;

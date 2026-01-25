@@ -1,6 +1,6 @@
 create table categories (
                             id uuid primary key,
-                            owner_id uuid not null,
+                            owner_id integer not null,
                             name text not null,
                             color text null,
                             archived boolean not null default false,
@@ -12,7 +12,7 @@ create unique index ux_categories_owner_name on categories(owner_id, name);
 
 create table focus_sessions (
                                 id uuid primary key,
-                                owner_id uuid not null,
+                                owner_id integer not null,
                                 start_at timestamptz not null,
                                 end_at timestamptz null,
                                 category_id uuid null references categories(id) on delete set null,
