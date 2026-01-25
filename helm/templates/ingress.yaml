@@ -1,0 +1,23 @@
+{{- if .Values.focus.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: "{{ .Values.focus.name }}-ingress"
+  namespace: {{ .Values.global.namespace }}
+  annotations:
+    alb.ingress.kubernetes.io/scheme: {{ .Values.focus.ingress.annotations."alb.ingress.kubernetes.io/scheme" }}
+    alb.ingress.kubernetes.io/target-type: {{ .Values.focus.ingress.annotations."alb.ingress.kubernetes.io/target-type" }}
+    alb.ingress.kubernetes.io/listen-ports: {{ .Values.focus.ingress.annotations."alb.ingress.kubernetes.io/listen-ports" }}
+spec:
+  ingressClassName: {{ .Values.focus.ingress.className }}
+  rules:
+    - http:
+        paths:
+          - path: {{ .Values.focus.ingress.path }}
+            pathType: {{ .Values.focus.ingress.pathType }}
+            backend:
+              service:
+                name: "{{ .Values.focus.name }}-service"
+                port:
+                  number: {{ .Values.focus.service.port }}
+{{- end }}
