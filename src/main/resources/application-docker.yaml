@@ -11,3 +11,7 @@ quarkus:
       auth:
         host: auth
         port: 50051
+
+  datasource:
+    jdbc:
+      url: jdbc:postgresql://localhost:5431/focus
