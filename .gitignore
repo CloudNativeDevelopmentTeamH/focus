@@ -43,6 +43,3 @@ nb-configuration.xml
 /.quarkus/cli/plugins/
 # TLS Certificates
 .certs/
-
-# Secrets
-/k8s/secret.yaml
