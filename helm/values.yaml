@@ -28,10 +28,10 @@ focus:
       failureThreshold: 3
     readiness:
       # /readyz
-      initialDelaySeconds: 10
+      initialDelaySeconds: 30
       periodSeconds: 10
       timeoutSeconds: 2
-      failureThreshold: 3
+      failureThreshold: 5
 
   # Resources
   resources:
@@ -113,6 +113,8 @@ quarkus:
   flyway:
     migrateAtStart: true
     locations: "db/migration"
+    baselineOnMigrate: "true"
+    validateOnMigrate: "false"
 
   datasource:
     dbKind: postgresql

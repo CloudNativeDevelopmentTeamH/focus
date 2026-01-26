@@ -29,6 +29,8 @@ data:
   # Flyway configuration
   QUARKUS_FLYWAY_MIGRATE_AT_START: {{ .Values.quarkus.flyway.migrateAtStart | quote }}
   QUARKUS_FLYWAY_LOCATIONS: {{ .Values.quarkus.flyway.locations | quote }}
+  QUARKUS_FLYWAY_BASELINE_ON_MIGRATE: {{ .Values.quarkus.flyway.baselineOnMigrate | quote }}
+  QUARKUS_FLYWAY_VALIDATE_ON_MIGRATE: {{ .Values.quarkus.flyway.validateOnMigrate | quote }}
 
   # Datasource configuration
   QUARKUS_DATASOURCE_DB_KIND: {{ .Values.quarkus.datasource.dbKind | quote }}
