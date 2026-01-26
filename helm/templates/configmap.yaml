@@ -37,7 +37,6 @@ data:
   QUARKUS_DATASOURCE_JDBC_URL: {{ .Values.quarkus.datasource.jdbc.url | quote }}
 
   # Focus application specific configuration
-  FOCUS_SECURITY_SECURE_COOKIES: {{ .Values.focusApp.security.secureCookies | quote }}
   FOCUS_CONSTRAINTS_NOTE_MAX_LENGTH: {{ .Values.focusApp.constraints.note.maxLength | quote }}
   FOCUS_CONSTRAINTS_CATEGORY_NAME_MAX_LENGTH: {{ .Values.focusApp.constraints.category.name.maxLength | quote }}
   FOCUS_DEFAULTS_CATEGORY_COLOR: {{ .Values.focusApp.defaults.categoryColor | quote }}
