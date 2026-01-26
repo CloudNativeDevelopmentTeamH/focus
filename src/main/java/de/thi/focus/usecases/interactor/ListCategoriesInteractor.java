@@ -23,7 +23,7 @@ public final class ListCategoriesInteractor implements ListCategoriesInputPort {
 
         List<ListCategoriesOutputDTO.Item> items = categories.stream()
                 .map(c -> new ListCategoriesOutputDTO.Item(
-                        c.getId(),
+                        c.getId().toString(),
                         c.getName().value(),
                         c.getColor().value(),
                         c.isArchived()
