@@ -89,9 +89,9 @@ quarkus:
     port: 8088
     cors:
       enabled: true
-      origins: "https://k8s-frontend-frontend-fe6f13f88d-1209588435.eu-central-1.elb.amazonaws.com,k8s-auth-authingr-e5aa653333-252007710.eu-central-1.elb.amazonaws.com"
+      origins: "http://k8s-frontend-frontend-fe6f13f88d-1209588435.eu-central-1.elb.amazonaws.com,https://k8s-frontend-frontend-fe6f13f88d-1209588435.eu-central-1.elb.amazonaws.com,http://k8s-auth-authingr-e5aa653333-252007710.eu-central-1.elb.amazonaws.com,https://k8s-auth-authingr-e5aa653333-252007710.eu-central-1.elb.amazonaws.com"
       methods: "GET,PUT,POST,DELETE,OPTIONS"
-      headers: "origin, content-type, accept, authorization"
+      headers: "origin,content-type,accept,authorization,x-csrf-token"
       accessControlAllowCredentials: true
 
   grpc:
