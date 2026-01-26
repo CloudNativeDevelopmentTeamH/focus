@@ -62,7 +62,19 @@ public class JpaCategoryRepository implements CategoryRepository {
     @Override
     @Transactional
     public void save(Category category) {
-        em.merge(CategoryMapper.toEntity(category));
+        CategoryEntity existing = em.find(CategoryEntity.class, category.getId().value());
+        
+        if (existing == null) {
+            // New entity
+            em.persist(CategoryMapper.toEntity(category));
+        } else {
+            // Update existing entity
+            existing.ownerId = category.getOwner().value();
+            existing.name = category.getName().value();
+            existing.color = category.getColor().value();
+            existing.archived = category.isArchived();
+            // createdAt and updatedAt are managed by @PrePersist/@PreUpdate
+        }
     }
 
     @Override
