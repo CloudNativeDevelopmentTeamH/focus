@@ -6,7 +6,11 @@ metadata:
   namespace: focus
   annotations:
     {{- range $key, $value := .Values.focus.ingress.annotations }}
-    {{ $key }}: {{ $value }}
+    {{- if eq $key "alb.ingress.kubernetes.io/listen-ports" }}
+    {{ $key }}: '{{ $value }}'
+    {{- else }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
     {{- end }}
 spec:
   ingressClassName: {{ .Values.focus.ingress.className }}
