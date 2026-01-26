@@ -22,7 +22,7 @@ public final class RootController {
                         "sessions", "/sessions",
                         "categories", "/categories",
                         "health", "/healthz",
-                        "readiness", "/readyz",
+                        "readiness", "/readyz"
                 )
         )).build();
     }
