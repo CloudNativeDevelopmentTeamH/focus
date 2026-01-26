@@ -5,6 +5,7 @@ import de.thi.focus.entities.ids.CategoryId;
 import de.thi.focus.entities.ids.UserId;
 import de.thi.focus.entities.ids.FocusSessionId;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface FocusSessionRepository {
@@ -18,4 +19,6 @@ public interface FocusSessionRepository {
     void save(FocusSession session);
 
     boolean existsByOwnerAndCategoryId(UserId ownerId, CategoryId categoryId);
+
+    List<FocusSession> findAllByUser(UserId userId);
 }

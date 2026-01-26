@@ -12,6 +12,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -85,5 +86,19 @@ public class JpaFocusSessionRepository implements FocusSessionRepository {
                 .getSingleResult();
 
         return count != null && count > 0;
+    }
+
+    @Override
+    public List<FocusSession> findAllByUser(UserId userId) {
+        return em.createQuery("""
+                select s from FocusSessionEntity s
+                where s.ownerId = :ownerId
+                order by s.startAt desc
+                """, FocusSessionEntity.class)
+                .setParameter("ownerId", userId.value())
+                .getResultList()
+                .stream()
+                .map(e -> FocusSessionMapper.toDomain(e, voFactory))
+                .toList();
     }
 }

@@ -207,4 +207,10 @@ public class ApplicationWiring {
     ) {
         return new ChangeCategoryColorInteractor(categoryRepository, voFactory, eventPublisher);
     }
+
+    @Produces
+    @ApplicationScoped
+    ListSessionsInputPort listSessionsInputPort(FocusSessionRepository sessionRepository) {
+        return new ListSessionsInteractor(sessionRepository);
+    }
 }

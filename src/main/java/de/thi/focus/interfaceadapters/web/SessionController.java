@@ -18,6 +18,7 @@ import de.thi.focus.usecases.dtos.input.StopSessionCommand;
 
 import de.thi.focus.usecases.dtos.input.UpdateSessionCommand;
 import de.thi.focus.usecases.dtos.output.GetRunningSessionOutputDTO;
+import de.thi.focus.usecases.dtos.output.ListSessionsOutputDTO;
 import de.thi.focus.usecases.dtos.output.ResumeSessionOutputDTO;
 import de.thi.focus.usecases.dtos.output.StartSessionOutputDTO;
 import de.thi.focus.usecases.dtos.output.StopSessionOutputDTO;
@@ -42,6 +43,7 @@ public final class SessionController {
     private final SessionHttpPresenter presenter;
     private final GetRunningSessionInputPort getRunningSession;
     private final UpdateSessionInputPort updateSession;
+    private final ListSessionsInputPort listSessions;
     private final CurrentUser currentUser;
 
     public SessionController(
@@ -51,6 +53,7 @@ public final class SessionController {
             SessionHttpPresenter presenter,
             GetRunningSessionInputPort getRunningSession,
             UpdateSessionInputPort updateSession,
+            ListSessionsInputPort listSessions,
             CurrentUser currentUser
     ) {
         this.startSession = Objects.requireNonNull(startSession);
@@ -59,6 +62,7 @@ public final class SessionController {
         this.presenter = Objects.requireNonNull(presenter);
         this.getRunningSession = Objects.requireNonNull(getRunningSession);
         this.updateSession = Objects.requireNonNull(updateSession);
+        this.listSessions = Objects.requireNonNull(listSessions);
         this.currentUser = Objects.requireNonNull(currentUser);
     }
 
@@ -142,6 +146,14 @@ public final class SessionController {
 
         GetRunningSessionOutputDTO output = getRunningSession.execute(userId);
         return presenter.present(output);
+    }
+
+    @GET
+    public Response list() {
+        UserId userId = currentUser.userId();
+
+        ListSessionsOutputDTO output = listSessions.execute(userId);
+        return Response.ok(output).build();
     }
 
     @POST

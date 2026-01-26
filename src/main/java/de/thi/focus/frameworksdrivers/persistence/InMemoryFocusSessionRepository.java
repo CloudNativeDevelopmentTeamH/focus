@@ -11,6 +11,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -56,6 +57,14 @@ public final class InMemoryFocusSessionRepository implements FocusSessionReposit
         return store.values().stream()
                 .filter(s -> s.getOwner().equals(ownerId))
                 .anyMatch(s -> categoryId.equals(s.getCategoryId()));
+    }
+
+    @Override
+    public List<FocusSession> findAllByUser(UserId userId) {
+        return store.values().stream()
+                .filter(s -> s.getOwner().equals(userId))
+                .sorted(Comparator.comparing(s -> s.getTimeRange().getStart(), Comparator.reverseOrder()))
+                .toList();
     }
 
     // Optional helper for tests
