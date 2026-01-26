@@ -80,7 +80,7 @@ focus:
     annotations:
       alb.ingress.kubernetes.io/scheme: internet-facing
       alb.ingress.kubernetes.io/target-type: ip
-      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
       alb.ingress.kubernetes.io/healthcheck-path: /q/health/live
       alb.ingress.kubernetes.io/healthcheck-interval-seconds: '30'
       alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '5'
