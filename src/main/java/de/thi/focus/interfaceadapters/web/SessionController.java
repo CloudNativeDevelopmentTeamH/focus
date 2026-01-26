@@ -118,15 +118,16 @@ public final class SessionController {
     ) {
         UserId userId = currentUser.userId();
 
-        if (previousSessionId == null || previousSessionId.isBlank()) {
-            throw new IllegalArgumentException("previousSessionId query parameter is required");
-        }
+        // previousSessionId is optional - if not provided, backend will find last finished session
+        FocusSessionId prevSessionId = (previousSessionId != null && !previousSessionId.isBlank())
+                ? FocusSessionId.fromString(previousSessionId)
+                : null;
 
         ResumeSessionHttpRequest safe = (request != null) ? request : new ResumeSessionHttpRequest();
 
         ResumeSessionCommand command = new ResumeSessionCommand(
                 userId,
-                FocusSessionId.fromString(previousSessionId),
+                prevSessionId,
                 parseInstantOrNull(safe.startedAt)
         );
 
