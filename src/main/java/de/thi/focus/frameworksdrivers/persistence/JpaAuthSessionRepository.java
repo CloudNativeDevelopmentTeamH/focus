@@ -1,6 +1,7 @@
 package de.thi.focus.frameworksdrivers.persistence;
 
 import de.thi.focus.frameworksdrivers.persistence.jpa.AuthSessionEntity;
+import de.thi.focus.usecases.ports.outbound.auth.AuthSessionRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -12,7 +13,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @ApplicationScoped
-public class JpaAuthSessionRepository {
+public class JpaAuthSessionRepository implements AuthSessionRepository {
 
     @PersistenceContext
     EntityManager em;

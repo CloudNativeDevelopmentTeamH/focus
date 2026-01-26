@@ -1,7 +1,7 @@
 package de.thi.focus.interfaceadapters.web.security;
 
 import de.thi.focus.entities.ids.UserId;
-import de.thi.focus.frameworksdrivers.persistence.JpaAuthSessionRepository;
+import de.thi.focus.usecases.ports.outbound.auth.AuthSessionRepository;
 import jakarta.annotation.Priority;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -21,10 +21,10 @@ public class SessionAuthFilter implements ContainerRequestFilter {
     private static final String COOKIE_CSRF = "focus_csrf";
     private static final String HEADER_CSRF = "X-CSRF-Token";
 
-    private final JpaAuthSessionRepository sessions;
+    private final AuthSessionRepository sessions;
     private final CurrentUser currentUser;
 
-    public SessionAuthFilter(JpaAuthSessionRepository sessions, CurrentUser currentUser) {
+    public SessionAuthFilter(AuthSessionRepository sessions, CurrentUser currentUser) {
         this.sessions = sessions;
         this.currentUser = currentUser;
     }

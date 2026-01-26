@@ -1,9 +1,9 @@
 package de.thi.focus.interfaceadapters.web;
 
 import de.thi.focus.entities.ids.UserId;
-import de.thi.focus.frameworksdrivers.persistence.JpaAuthSessionRepository;
 import de.thi.focus.frameworksdrivers.persistence.jpa.AuthSessionEntity;
 import de.thi.focus.usecases.ports.outbound.auth.AuthService;
+import de.thi.focus.usecases.ports.outbound.auth.AuthSessionRepository;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 
@@ -21,12 +21,12 @@ public class AuthController {
     private static final Duration SESSION_TTL = Duration.ofHours(12);
 
     private final AuthService authService;
-    private final JpaAuthSessionRepository sessions;
+    private final AuthSessionRepository sessions;
     private final boolean secureCookies;
 
     public AuthController(
             AuthService authService,
-            JpaAuthSessionRepository sessions,
+            AuthSessionRepository sessions,
             @org.eclipse.microprofile.config.inject.ConfigProperty(name = "focus.security.secure-cookies")
             boolean secureCookies
     ) {
