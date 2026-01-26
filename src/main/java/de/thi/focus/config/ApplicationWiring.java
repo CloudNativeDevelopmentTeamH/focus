@@ -45,11 +45,6 @@ public class ApplicationWiring {
     // ---------- Outbound adapters ----------
 
     @Produces
-    public CategoryRepository categoryRepository(EntityManager em, FocusValueObjectFactory voFactory) {
-        return new JpaCategoryRepository(em, voFactory);
-    }
-
-    @Produces
     @ApplicationScoped
     Clock clock() {
         return new SystemClock();
