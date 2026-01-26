@@ -50,4 +50,4 @@ spec:
             - configMapRef:
                 name: focus-config
             - secretRef:
-                name: secrets
+                name: focus-secrets
