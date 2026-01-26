@@ -5,12 +5,12 @@ metadata:
   name: "{{ .Values.focus.name }}-ingress"
   namespace: focus
   annotations:
-    {{- range $key, $value := .Values.focus.ingress.annotations }}
-    {{- if eq $key "alb.ingress.kubernetes.io/listen-ports" }}
-    {{ $key }}: '{{ $value }}'
-    {{- else }}
-    {{ $key }}: {{ $value | quote }}
-    {{- end }}
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    {{- if .Values.focus.ingress.certificateArn }}
+    alb.ingress.kubernetes.io/certificate-arn: "{{ .Values.focus.ingress.certificateArn }}"
     {{- end }}
 spec:
   ingressClassName: {{ .Values.focus.ingress.className }}
