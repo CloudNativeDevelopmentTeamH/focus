@@ -67,17 +67,19 @@ public final class SessionController {
     public Response start(StartSessionHttpRequest request) {
         UserId userId = currentUser.userId();
 
-        Instant startedAt = parseInstantOrNull(request.startedAt);
+        StartSessionHttpRequest safe = (request != null) ? request : new StartSessionHttpRequest();
 
-        CategoryId categoryId = (request.categoryId == null || request.categoryId.isBlank())
+        Instant startedAt = parseInstantOrNull(safe.startedAt);
+
+        CategoryId categoryId = (safe.categoryId == null || safe.categoryId.isBlank())
                 ? null
-                : CategoryId.fromString(request.categoryId);
+                : CategoryId.fromString(safe.categoryId);
 
         StartSessionCommand command = new StartSessionCommand(
                 userId,
                 startedAt,
                 categoryId,
-                blankToNull(request.note)
+                blankToNull(safe.note)
         );
 
         StartSessionOutputDTO output = startSession.execute(command);
