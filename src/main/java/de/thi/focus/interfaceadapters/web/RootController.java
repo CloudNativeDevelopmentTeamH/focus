@@ -21,7 +21,8 @@ public final class RootController {
                 "endpoints", Map.of(
                         "sessions", "/sessions",
                         "categories", "/categories",
-                        "health", "/q/health"
+                        "health", "/healthz",
+                        "readiness", "/readyz",
                 )
         )).build();
     }

@@ -37,6 +37,9 @@ public class SessionAuthFilter implements ContainerRequestFilter {
         if (path.equals("auth") || path.startsWith("auth/") || 
             path.equals("/auth") || path.startsWith("/auth/")) return;
 
+        // Root endpoint
+        if (path.equals("") || path.equals("/")) return;
+
         // Health endpoints
         if (path.equals("healthz") || path.startsWith("healthz/") ||
             path.equals("/healthz") || path.startsWith("/healthz/")) return;
