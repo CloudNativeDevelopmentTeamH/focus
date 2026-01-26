@@ -34,11 +34,14 @@ public class SessionAuthFilter implements ContainerRequestFilter {
         String path = ctx.getUriInfo().getPath();
 
         // Allow unauthenticated endpoints
-        if (path.equals("auth") || path.startsWith("auth/")) return;
+        if (path.equals("auth") || path.startsWith("auth/") || 
+            path.equals("/auth") || path.startsWith("/auth/")) return;
 
         // Health endpoints
-        if (path.equals("healthz") || path.startsWith("healthz/")) return;
-        if (path.equals("readyz") || path.startsWith("readyz/")) return;
+        if (path.equals("healthz") || path.startsWith("healthz/") ||
+            path.equals("/healthz") || path.startsWith("/healthz/")) return;
+        if (path.equals("readyz") || path.startsWith("readyz/") ||
+            path.equals("/readyz") || path.startsWith("/readyz/")) return;
 
         // CORS Preflight
         if ("OPTIONS".equals(ctx.getMethod())) return;

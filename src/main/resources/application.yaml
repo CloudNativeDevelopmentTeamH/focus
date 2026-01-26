@@ -35,6 +35,8 @@ quarkus:
       url: jdbc:postgresql://localhost:5432/focus
 
 focus:
+  security:
+    secure-cookies: false
   constraints:
     note:
       max-length: 1000

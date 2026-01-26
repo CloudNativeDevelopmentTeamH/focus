@@ -22,10 +22,17 @@ public class AuthController {
 
     private final AuthService authService;
     private final JpaAuthSessionRepository sessions;
+    private final boolean secureCookies;
 
-    public AuthController(AuthService authService, JpaAuthSessionRepository sessions) {
+    public AuthController(
+            AuthService authService,
+            JpaAuthSessionRepository sessions,
+            @org.eclipse.microprofile.config.inject.ConfigProperty(name = "focus.security.secure-cookies")
+            boolean secureCookies
+    ) {
         this.authService = authService;
         this.sessions = sessions;
+        this.secureCookies = secureCookies;
     }
 
     @POST
@@ -58,7 +65,7 @@ public class AuthController {
                 .maxAge((int) SESSION_TTL.toSeconds())
                 .build();
 
-        // CSRF double-submit token (recommended; FE echoes it in X-CSRF-Token)
+        // CSRF double-submit token
         String csrf = UUID.randomUUID().toString();
         NewCookie csrfCookie = new NewCookie.Builder(COOKIE_CSRF)
                 .value(csrf)
@@ -126,9 +133,7 @@ public class AuthController {
         return token;
     }
 
-    private static boolean isProdSecure() {
-        // For time efficiency: hardcode false in local dev; flip to true in prod.
-        // Later: inject config (quarkus.http.ssl-port / quarkus.profile etc.)
-        return false;
+    private boolean isProdSecure() {
+        return secureCookies;
     }
 }
