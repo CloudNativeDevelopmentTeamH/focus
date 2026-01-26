@@ -60,7 +60,18 @@ public class JpaFocusSessionRepository implements FocusSessionRepository {
     @Override
     @Transactional
     public void save(FocusSession session) {
-        em.merge(FocusSessionMapper.toEntity(session));
+        FocusSessionEntity existing = em.find(FocusSessionEntity.class, session.getId().value());
+        
+        if (existing == null) {
+            em.persist(FocusSessionMapper.toEntity(session));
+        } else {
+            existing.ownerId = session.getOwner().value();
+            existing.startAt = session.getTimeRange().getStart();
+            existing.endAt = session.getTimeRange().getEnd();
+            existing.categoryId = session.getCategoryId() != null ? session.getCategoryId().value() : null;
+            existing.note = session.getNote() != null ? session.getNote().toString() : null;
+            // createdAt and updatedAt are managed by @PrePersist/@PreUpdate
+        }
     }
 
     @Override
