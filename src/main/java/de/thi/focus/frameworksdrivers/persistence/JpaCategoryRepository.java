@@ -7,23 +7,22 @@ import de.thi.focus.entities.valueobjects.CategoryName;
 import de.thi.focus.frameworksdrivers.persistence.jpa.CategoryEntity;
 import de.thi.focus.usecases.factories.FocusValueObjectFactory;
 import de.thi.focus.usecases.ports.outbound.CategoryRepository;
-import jakarta.enterprise.inject.Vetoed;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
-@Vetoed
+@ApplicationScoped
 public class JpaCategoryRepository implements CategoryRepository {
 
-    private final EntityManager em;
-    private final FocusValueObjectFactory voFactory;
+    @Inject
+    EntityManager em;
 
-    public JpaCategoryRepository(EntityManager em, FocusValueObjectFactory voFactory) {
-        this.em = em;
-        this.voFactory = voFactory;
-    }
+    @Inject
+    FocusValueObjectFactory voFactory;
 
     @Override
     public Optional<Category> findById(CategoryId id) {
