@@ -60,8 +60,8 @@ public class AuthController {
                 .value(sid.toString())
                 .path("/")
                 .httpOnly(true)
-                .secure(isProdSecure())
-                .sameSite(NewCookie.SameSite.LAX)
+                .secure(true)
+                .sameSite(NewCookie.SameSite.NONE)
                 .maxAge((int) SESSION_TTL.toSeconds())
                 .build();
 
@@ -71,8 +71,8 @@ public class AuthController {
                 .value(csrf)
                 .path("/")
                 .httpOnly(false)
-                .secure(isProdSecure())
-                .sameSite(NewCookie.SameSite.LAX)
+                .secure(true)
+                .sameSite(NewCookie.SameSite.NONE)
                 .maxAge((int) SESSION_TTL.toSeconds())
                 .build();
 
@@ -97,8 +97,8 @@ public class AuthController {
                 .value("")
                 .path("/")
                 .httpOnly(true)
-                .secure(isProdSecure())
-                .sameSite(NewCookie.SameSite.LAX)
+                .secure(true)
+                .sameSite(NewCookie.SameSite.NONE)
                 .maxAge(0)
                 .build();
 
@@ -106,8 +106,8 @@ public class AuthController {
                 .value("")
                 .path("/")
                 .httpOnly(false)
-                .secure(isProdSecure())
-                .sameSite(NewCookie.SameSite.LAX)
+                .secure(true)
+                .sameSite(NewCookie.SameSite.NONE)
                 .maxAge(0)
                 .build();
 
@@ -131,9 +131,5 @@ public class AuthController {
         String token = trimmed.substring(7).trim();
         if (token.isEmpty()) throw new IllegalArgumentException("Bearer token must not be blank");
         return token;
-    }
-
-    private boolean isProdSecure() {
-        return secureCookies;
     }
 }

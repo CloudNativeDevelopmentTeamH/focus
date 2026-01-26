@@ -123,8 +123,6 @@ quarkus:
 
 # Application specific configuration
 focusApp:
-  security:
-    secureCookies: false
   constraints:
     note:
       maxLength: 1000
