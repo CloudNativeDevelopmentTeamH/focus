@@ -40,15 +40,22 @@ public final class ResumeSessionInteractor implements ResumeSessionInputPort {
 
         runningSessionPolicy.ensureNoRunningSession(command.userId());
 
-        FocusSession previous = sessionRepository.findById(command.previousSessionId())
-                .orElseThrow(() -> new SessionNotFoundException(command.previousSessionId()));
+        // find last finished session
+        FocusSession previous;
+        if (command.previousSessionId() == null) {
+            previous = sessionRepository.findLastFinishedByUser(command.userId())
+                    .orElseThrow(() -> new SessionNotFoundException(null));
+        } else {
+            previous = sessionRepository.findById(command.previousSessionId())
+                    .orElseThrow(() -> new SessionNotFoundException(command.previousSessionId()));
 
-        if (!previous.getOwner().equals(command.userId())) {
-            throw new SessionAccessDeniedException(command.userId(), command.previousSessionId());
-        }
+            if (!previous.getOwner().equals(command.userId())) {
+                throw new SessionAccessDeniedException(command.userId(), command.previousSessionId());
+            }
 
-        if (previous.isRunning()) {
-            throw new de.thi.focus.entities.errors.SessionStillRunningException(previous.getId());
+            if (previous.isRunning()) {
+                throw new de.thi.focus.entities.errors.SessionStillRunningException(previous.getId());
+            }
         }
 
         Instant startedAt = command.startedAt() != null ? command.startedAt() : clock.now();
