@@ -86,6 +86,7 @@ focus:
       alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '5'
       alb.ingress.kubernetes.io/healthy-threshold-count: '2'
       alb.ingress.kubernetes.io/unhealthy-threshold-count: '2'
+      alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:eu-central-1:758280076486:certificate/946198a1-757c-4868-8e17-e2446087313f"
       # alb.ingress.kubernetes.io/group.name: shared-alb  # Share ALB with other services
     host: ""  # = Domain name
     path: "/"
@@ -98,8 +99,8 @@ quarkus:
   http:
     port: 8088
     cors:
-      enabled: false
-      origins: "http://localhost:3000"
+      enabled: true
+      origins: "https://k8s-frontend-frontend-fe6f13f88d-1209588435.eu-central-1.elb.amazonaws.com,k8s-auth-authingr-e5aa653333-252007710.eu-central-1.elb.amazonaws.com"
       methods: "GET,PUT,POST,DELETE,OPTIONS"
       headers: "origin, content-type, accept, authorization"
       accessControlAllowCredentials: true
