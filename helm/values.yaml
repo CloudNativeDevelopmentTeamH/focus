@@ -89,7 +89,6 @@ focus:
       alb.ingress.kubernetes.io/ssl-redirect: "443"
       alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:eu-central-1:758280076486:certificate/946198a1-757c-4868-8e17-e2446087313f"
       # alb.ingress.kubernetes.io/group.name: shared-alb  # Share ALB with other services
-    # host:
     path: "/"
     pathType: Prefix
 

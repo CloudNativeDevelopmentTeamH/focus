@@ -6,17 +6,12 @@ metadata:
   namespace: focus
   annotations:
     {{- range $key, $value := .Values.focus.ingress.annotations }}
-    {{ $key }}: {{ $value | quote }}
+    {{ $key }}: {{ $value }}
     {{- end }}
 spec:
   ingressClassName: {{ .Values.focus.ingress.className }}
   rules:
-    {{- if .Values.focus.ingress.host }}
-    - host: {{ .Values.focus.ingress.host }}
-      http:
-    {{- else }}
     - http:
-    {{- end }}
         paths:
           - path: {{ .Values.focus.ingress.path }}
             pathType: {{ .Values.focus.ingress.pathType }}
