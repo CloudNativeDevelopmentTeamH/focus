@@ -97,7 +97,7 @@ quarkus:
   grpc:
     clients:
       auth:
-        host: auth-service.auth.svc.cluster.local
+        host: auth-app-service.auth.svc.cluster.local
         port: 50051
         plainText: true
         useQuarkusGrpcClient: true
