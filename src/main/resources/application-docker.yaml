@@ -11,3 +11,12 @@ quarkus:
       auth:
         host: auth
         port: 50051
+      analytics:
+        host: analytics
+        port: 9090
+
+focus:
+  events:
+    kafka:
+      bootstrap-servers: redpanda:9092
+      topic: focus.events

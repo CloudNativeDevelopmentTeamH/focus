@@ -14,6 +14,11 @@ quarkus:
         port: 50051
         plain-text: true # TODO use TLS in production
         use-quarkus-grpc-client: true
+      analytics:
+        host: localhost
+        port: 9090
+        plain-text: true
+        use-quarkus-grpc-client: true
 
   hibernate-orm:
     enabled: true
@@ -35,6 +40,10 @@ quarkus:
       url: jdbc:postgresql://localhost:5432/focus
 
 focus:
+  events:
+    kafka:
+      bootstrap-servers: localhost:9092
+      topic: focus.events
   security:
     secure-cookies: false
   constraints:
