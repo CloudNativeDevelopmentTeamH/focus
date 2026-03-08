@@ -19,10 +19,11 @@ public final class RootController {
                 "version", "1.0",
                 "status", "running",
                 "endpoints", Map.of(
-                        "sessions", "/sessions",
-                        "categories", "/categories",
-                        "health", "/healthz",
-                        "readiness", "/readyz"
+                    "sessions", "/sessions",
+                    "categories", "/categories",
+                    "analytics", "/analytics",
+                    "health", "/healthz",
+                    "readiness", "/readyz"
                 )
         )).build();
     }
