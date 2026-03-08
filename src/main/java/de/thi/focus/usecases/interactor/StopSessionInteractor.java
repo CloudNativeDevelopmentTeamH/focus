@@ -1,6 +1,7 @@
 package de.thi.focus.usecases.interactor;
 
 import de.thi.focus.entities.FocusSession;
+import de.thi.focus.entities.events.FocusSessionStopped;
 import de.thi.focus.usecases.dtos.input.StopSessionCommand;
 import de.thi.focus.usecases.dtos.output.StopSessionOutputDTO;
 import de.thi.focus.usecases.errors.SessionAccessDeniedException;
@@ -46,7 +47,16 @@ public final class StopSessionInteractor implements StopSessionInputPort {
 
         sessionRepository.save(session);
 
-        eventPublisher.publish(List.of());
+        eventPublisher.publish(List.of(
+            new FocusSessionStopped(
+                session.getId(),
+                session.getOwner(),
+                session.getCategoryId(),
+                endedAt,
+                session.duration(),
+                clock.now()
+            )
+        ));
 
         return new StopSessionOutputDTO(session.getId());
     }
