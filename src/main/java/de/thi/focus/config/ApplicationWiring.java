@@ -1,5 +1,6 @@
 package de.thi.focus.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.thi.focus.frameworksdrivers.persistence.*;
 import de.thi.focus.interfaceadapters.web.presenter.CategoryHttpPresenter;
 import de.thi.focus.interfaceadapters.web.presenter.JsonCategoryHttpPresenter;
@@ -19,12 +20,13 @@ import de.thi.focus.usecases.ports.outbound.system.Clock;
 import de.thi.focus.usecases.ports.outbound.EventPublisher;
 import de.thi.focus.usecases.ports.outbound.FocusSessionRepository;
 
-import de.thi.focus.frameworksdrivers.events.NoopEventPublisher;
+import de.thi.focus.frameworksdrivers.events.KafkaEventPublisher;
 import de.thi.focus.frameworksdrivers.time.SystemClock;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.persistence.EntityManager;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 public class ApplicationWiring {
@@ -52,8 +54,12 @@ public class ApplicationWiring {
 
     @Produces
     @ApplicationScoped
-    EventPublisher eventPublisher() {
-        return new NoopEventPublisher();
+    EventPublisher eventPublisher(
+            ObjectMapper objectMapper,
+            @ConfigProperty(name = "focus.events.kafka.bootstrap-servers") String bootstrapServers,
+            @ConfigProperty(name = "focus.events.kafka.topic") String topic
+    ) {
+        return new KafkaEventPublisher(bootstrapServers, topic, objectMapper);
     }
 
     // ---------- Policies ----------
