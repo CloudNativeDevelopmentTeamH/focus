@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package analytics.v1;
+
+option java_multiple_files = true;
+option java_package = "de.thi.focus.analytics.grpc";
+option java_outer_classname = "AnalyticsProto";
+
+// AnalyticsService exposes aggregated focus session statistics.
+service AnalyticsService {
+  // GetGeneralStats returns overall and last-10 averages plus category shares.
+  rpc GetGeneralStats(GetGeneralStatsRequest) returns (GetGeneralStatsResponse);
+  // GetAverageLengthByCategory returns average duration for one category.
+  rpc GetAverageLengthByCategory(GetAverageLengthByCategoryRequest) returns (GetAverageLengthByCategoryResponse);
+}
+
+message GetGeneralStatsRequest {
+  string user_id = 1;
+}
+
+message CategoryShare {
+  string category_id = 1;
+  double share = 2;
+  int64 total_seconds = 3;
+}
+
+message GetGeneralStatsResponse {
+  double average_length_overall_seconds = 1;
+  double average_length_last10_seconds = 2;
+  repeated CategoryShare category_shares = 3;
+}
+
+message GetAverageLengthByCategoryRequest {
+  string user_id = 1;
+  string category_id = 2;
+}
+
+message GetAverageLengthByCategoryResponse {
+  string category_id = 1;
+  double average_length_seconds = 2;
+  int64 count = 3;
+  int64 sum_seconds = 4;
+}
