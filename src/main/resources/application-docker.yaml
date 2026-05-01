@@ -18,5 +18,5 @@ quarkus:
 focus:
   events:
     kafka:
-      bootstrap-servers: redpanda:9092
+      bootstrap-servers: ${FOCUS_EVENTS_KAFKA_BOOTSTRAP_SERVERS:redpanda:9092}
       topic: focus.events

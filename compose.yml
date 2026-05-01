@@ -26,6 +26,7 @@ services:
       - "8088:8088"
     environment:
       QUARKUS_PROFILE: docker
+      FOCUS_EVENTS_KAFKA_BOOTSTRAP_SERVERS: host.docker.internal:19092
     restart: unless-stopped
 
 volumes:
