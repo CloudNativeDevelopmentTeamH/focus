@@ -46,6 +46,7 @@ focus:
       topic: focus.events
   security:
     secure-cookies: false
+    csrf-enabled: true
   constraints:
     note:
       max-length: 1000

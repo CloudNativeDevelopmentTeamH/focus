@@ -13,6 +13,8 @@ import jakarta.ws.rs.ext.Provider;
 import java.time.Instant;
 import java.util.UUID;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class SessionAuthFilter implements ContainerRequestFilter {
@@ -24,9 +26,17 @@ public class SessionAuthFilter implements ContainerRequestFilter {
     private final AuthSessionRepository sessions;
     private final CurrentUser currentUser;
 
-    public SessionAuthFilter(AuthSessionRepository sessions, CurrentUser currentUser) {
+    private final boolean csrfEnabled;    
+
+    public SessionAuthFilter(
+        AuthSessionRepository sessions,
+        CurrentUser currentUser,
+        @ConfigProperty(name = "focus.security.csrf-enabled", defaultValue = "true") 
+        boolean csrfEnabled
+    ) {
         this.sessions = sessions;
         this.currentUser = currentUser;
+        this.csrfEnabled = csrfEnabled;
     }
 
     @Override
@@ -63,7 +73,7 @@ public class SessionAuthFilter implements ContainerRequestFilter {
             return;
         }
 
-        if (isStateChanging(ctx) && !csrfValid(ctx)) {
+        if (csrfEnabled && isStateChanging(ctx) && !csrfValid(ctx)) {
             ctx.abortWith(Response.status(403).entity("CSRF validation failed").build());
             return;
         }
