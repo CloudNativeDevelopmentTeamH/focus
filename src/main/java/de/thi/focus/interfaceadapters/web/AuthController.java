@@ -19,7 +19,8 @@ public class AuthController {
     private static final String COOKIE_SID = "focus_sid";
     private static final String COOKIE_CSRF = "focus_csrf";
     private static final Duration SESSION_TTL = Duration.ofHours(12);
-
+    
+    private final String rootDomain;
     private final AuthService authService;
     private final AuthSessionRepository sessions;
     private final boolean secureCookies;
@@ -28,11 +29,14 @@ public class AuthController {
             AuthService authService,
             AuthSessionRepository sessions,
             @org.eclipse.microprofile.config.inject.ConfigProperty(name = "focus.security.secure-cookies")
-            boolean secureCookies
+            boolean secureCookies,
+            @org.eclipse.microprofile.config.inject.ConfigProperty(name = "focus.cookies.root-domain")
+            String rootDomain
     ) {
         this.authService = authService;
         this.sessions = sessions;
         this.secureCookies = secureCookies;
+        this.rootDomain = rootDomain;
     }
 
     @POST
@@ -59,8 +63,9 @@ public class AuthController {
         NewCookie sidCookie = new NewCookie.Builder(COOKIE_SID)
                 .value(sid.toString())
                 .path("/")
+                .domain(rootDomain)
                 .httpOnly(true)
-                .secure(true)
+                .secure(secureCookies)
                 .sameSite(NewCookie.SameSite.NONE)
                 .maxAge((int) SESSION_TTL.toSeconds())
                 .build();
@@ -71,7 +76,7 @@ public class AuthController {
                 .value(csrf)
                 .path("/")
                 .httpOnly(false)
-                .secure(true)
+                .secure(secureCookies)
                 .sameSite(NewCookie.SameSite.NONE)
                 .maxAge((int) SESSION_TTL.toSeconds())
                 .build();
@@ -97,7 +102,7 @@ public class AuthController {
                 .value("")
                 .path("/")
                 .httpOnly(true)
-                .secure(true)
+                .secure(secureCookies)
                 .sameSite(NewCookie.SameSite.NONE)
                 .maxAge(0)
                 .build();
@@ -106,7 +111,7 @@ public class AuthController {
                 .value("")
                 .path("/")
                 .httpOnly(false)
-                .secure(true)
+                .secure(secureCookies)
                 .sameSite(NewCookie.SameSite.NONE)
                 .maxAge(0)
                 .build();
