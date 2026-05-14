@@ -60,7 +60,7 @@ public class AuthController {
 
         sessions.persist(s);
 
-        String domain = (rootDomain == null || rootDomain.isBlank()) ? null : rootDomain;
+        String domain = (rootDomain == "NULL") ? null : rootDomain;
 
         NewCookie sidCookie = new NewCookie.Builder(COOKIE_SID)
                 .value(sid.toString())
@@ -101,7 +101,7 @@ public class AuthController {
             }
         }
 
-        String domain = (rootDomain == null || rootDomain.isBlank()) ? null : rootDomain;
+        String domain = (rootDomain == "NULL") ? null : rootDomain;
 
         NewCookie clearSid = new NewCookie.Builder(COOKIE_SID)
                 .value("")
