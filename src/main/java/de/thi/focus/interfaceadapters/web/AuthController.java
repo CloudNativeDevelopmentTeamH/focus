@@ -30,7 +30,7 @@ public class AuthController {
             AuthSessionRepository sessions,
             @org.eclipse.microprofile.config.inject.ConfigProperty(name = "focus.security.secure-cookies")
             boolean secureCookies,
-            @org.eclipse.microprofile.config.inject.ConfigProperty(name = "focus.cookies.root-domain")
+            @org.eclipse.microprofile.config.inject.ConfigProperty(name = "focus.cookies.root-domain", defaultValue = "")
             String rootDomain
     ) {
         this.authService = authService;

@@ -55,5 +55,3 @@ focus:
         max-length: 50
   defaults:
     category-color: "#FFFFFF"
-  cookies:
-    root-domain: ""
