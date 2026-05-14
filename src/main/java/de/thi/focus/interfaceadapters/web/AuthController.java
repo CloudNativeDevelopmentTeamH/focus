@@ -20,7 +20,6 @@ public class AuthController {
     private static final String COOKIE_CSRF = "focus_csrf";
     private static final Duration SESSION_TTL = Duration.ofHours(12);
     
-    private final String rootDomain;
     private final AuthService authService;
     private final AuthSessionRepository sessions;
     private final boolean secureCookies;
@@ -29,14 +28,11 @@ public class AuthController {
             AuthService authService,
             AuthSessionRepository sessions,
             @org.eclipse.microprofile.config.inject.ConfigProperty(name = "focus.security.secure-cookies")
-            boolean secureCookies,
-            @org.eclipse.microprofile.config.inject.ConfigProperty(name = "focus.cookies.root-domain", defaultValue = "")
-            String rootDomain
+            boolean secureCookies
     ) {
         this.authService = authService;
         this.sessions = sessions;
         this.secureCookies = secureCookies;
-        this.rootDomain = rootDomain;
     }
 
     @POST
@@ -60,12 +56,9 @@ public class AuthController {
 
         sessions.persist(s);
 
-        String domain = (rootDomain == "NULL") ? null : rootDomain;
-
         NewCookie sidCookie = new NewCookie.Builder(COOKIE_SID)
                 .value(sid.toString())
                 .path("/")
-                .domain(domain)
                 .httpOnly(true)
                 .secure(secureCookies)
                 .sameSite(NewCookie.SameSite.NONE)
@@ -77,7 +70,6 @@ public class AuthController {
         NewCookie csrfCookie = new NewCookie.Builder(COOKIE_CSRF)
                 .value(csrf)
                 .path("/")
-                .domain(domain)
                 .httpOnly(false)
                 .secure(secureCookies)
                 .sameSite(NewCookie.SameSite.NONE)
@@ -101,12 +93,9 @@ public class AuthController {
             }
         }
 
-        String domain = (rootDomain == "NULL") ? null : rootDomain;
-
         NewCookie clearSid = new NewCookie.Builder(COOKIE_SID)
                 .value("")
                 .path("/")
-                .domain(domain)
                 .httpOnly(true)
                 .secure(secureCookies)
                 .sameSite(NewCookie.SameSite.NONE)
@@ -116,7 +105,6 @@ public class AuthController {
         NewCookie clearCsrf = new NewCookie.Builder(COOKIE_CSRF)
                 .value("")
                 .path("/")
-                .domain(domain)
                 .httpOnly(false)
                 .secure(secureCookies)
                 .sameSite(NewCookie.SameSite.NONE)
