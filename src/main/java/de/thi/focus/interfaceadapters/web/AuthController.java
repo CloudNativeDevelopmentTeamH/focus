@@ -60,10 +60,12 @@ public class AuthController {
 
         sessions.persist(s);
 
+        String domain = (rootDomain == null || rootDomain.isBlank()) ? null : rootDomain;
+
         NewCookie sidCookie = new NewCookie.Builder(COOKIE_SID)
                 .value(sid.toString())
                 .path("/")
-                .domain(rootDomain)
+                .domain(domain)
                 .httpOnly(true)
                 .secure(secureCookies)
                 .sameSite(NewCookie.SameSite.NONE)
@@ -75,7 +77,7 @@ public class AuthController {
         NewCookie csrfCookie = new NewCookie.Builder(COOKIE_CSRF)
                 .value(csrf)
                 .path("/")
-                .domain(rootDomain)
+                .domain(domain)
                 .httpOnly(false)
                 .secure(secureCookies)
                 .sameSite(NewCookie.SameSite.NONE)
@@ -99,10 +101,12 @@ public class AuthController {
             }
         }
 
+        String domain = (rootDomain == null || rootDomain.isBlank()) ? null : rootDomain;
+
         NewCookie clearSid = new NewCookie.Builder(COOKIE_SID)
                 .value("")
                 .path("/")
-                .domain(rootDomain)
+                .domain(domain)
                 .httpOnly(true)
                 .secure(secureCookies)
                 .sameSite(NewCookie.SameSite.NONE)
@@ -112,7 +116,7 @@ public class AuthController {
         NewCookie clearCsrf = new NewCookie.Builder(COOKIE_CSRF)
                 .value("")
                 .path("/")
-                .domain(rootDomain)
+                .domain(domain)
                 .httpOnly(false)
                 .secure(secureCookies)
                 .sameSite(NewCookie.SameSite.NONE)

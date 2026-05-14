@@ -56,4 +56,4 @@ focus:
   defaults:
     category-color: "#FFFFFF"
   cookies:
-    root-domain: "localhost"
+    root-domain: ""
